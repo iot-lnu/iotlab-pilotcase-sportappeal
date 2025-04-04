@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  ble-logger:
+    build: . # Build the image from the Dockerfile in the current directory
+    container_name: ble-data-logger
+    restart: unless-stopped
+    # --- Critical for BLE Access ---
+    # Use host network to access host's Bluetooth adapter directly
+    network_mode: "host"
+    # Mount the host's D-Bus socket for communication with the Bluetooth service
+    volumes:
+      - /var/run/dbus:/var/run/dbus
+    # --- End Critical ---
+    # Environment variables to configure BLE target (override Dockerfile defaults if needed)
+    environment:
+      - BLE_DEVICE_NAME=ESP32_Nano_Sensor # <-- CHANGE if your device name is different
+      - BLE_SERVICE_UUID=4fafc201-1fb5-459e-8fcc-c5c9c331914b # <-- CHANGE to your Service UUID
+      - BLE_CHARACTERISTIC_UUID=beb5483e-36e1-4688-b7f5-ea07361b26a8 # <-- CHANGE to your Characteristic UUID
+      # - PORT=3000 # Only needed if you change the port and DON'T use host network mode
+    # No 'ports' mapping needed when using network_mode: host
+    # The container uses the host's port 3000 directly.
