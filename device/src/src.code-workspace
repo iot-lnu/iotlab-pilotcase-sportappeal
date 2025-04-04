@@ -1,0 +1,24 @@
+{
+	"folders": [
+		{
+			"path": "../../250326-092434-arduino_nano_esp32/src"
+		},
+		{
+			"name": "250317-130620-arduino_nano_esp32",
+			"path": "../../250317-130620-arduino_nano_esp32"
+		},
+		{
+			"name": "250317-104609-arduino_nano_esp32",
+			"path": "../../250317-104609-arduino_nano_esp32"
+		},
+		{
+			"name": "250402-104233-arduino_nano_esp32",
+			"path": "../../250402-104233-arduino_nano_esp32"
+		},
+		{
+			"name": "Jesper_sportscience",
+			"path": ".."
+		}
+	],
+	"settings": {}
+}
