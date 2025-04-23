@@ -25,9 +25,15 @@ Protocentral_ADS1220 pc_ads1220;
 #define SAMPLER_STACK_SIZE   (configMINIMAL_STACK_SIZE * 8)
 #define SENDER_STACK_SIZE    (configMINIMAL_STACK_SIZE * 10) // Increased stack for BLE potentially
 
+typedef struct {
+    uint32_t value;
+    uint8_t source;
+}tagged_adc_sample_t
+
 QueueHandle_t xAdcQueue;
 TaskHandle_t xSamplerTaskHandle = NULL;
 TaskHandle_t xSenderTaskHandle = NULL;
+SemaphoreHandle_t xAdcMutex;
 
 // --- BLE Configuration ---
 BLEServer* pServer = NULL;
@@ -68,24 +74,63 @@ void IRAM_ATTR drdyInterruptHndlr() {
 }
 
 // --- FreeRTOS Tasks ---
-void vSamplerTask(void *pvParameters) {
-    int32_t adc_data;
+void vSamplerTask1(void *pvParameters) {
+    tagged_adc_sample_t sample;
     BaseType_t xResult;
-    Serial.println("Sampler Task started.");
-    attachInterrupt(digitalPinToInterrupt(ADS1220_DRDY_PIN), drdyInterruptHndlr, FALLING);
-    pc_ads1220.Start_Conv();
-    Serial.println("ADS1220 Continuous Conversion Started.");
+
+    Serial.println("Sampler Task 1 (AIN0-AIN1) started.");
 
     for (;;) {
-        ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
-        adc_data = pc_ads1220.Read_Data_Samples();
-        xResult = xQueueSend(xAdcQueue, &adc_data, (TickType_t)10);
-        if (xResult != pdPASS) {
-            Serial.println("Error: ADC Queue full!");
+        if (xSemaphoreTake(xAdcMutex, portMAX_DELAY)) {
+            pc_ads1220.select_mux_channels(MUX_AIN0_AIN1);
+            pc_ads1220.set_conv_mode_single_shot();
+            pc_ads1220.Start_Conv();
+
+            while (digitalRead(ADS1220_DRDY_PIN) == HIGH);
+
+            sample.value = pc_ads1220.Read_Data_Samples();
+            sample.source = 0;  // Tag for sensor 1
+
+            xSemaphoreGive(xAdcMutex);
+
+            xResult = xQueueSend(xAdcQueue, &sample, 10);
+            if (xResult != pdPASS) {
+                Serial.println("Task1: Queue full!");
+            }
+
+            vTaskDelay(pdMS_TO_TICKS(10)); // Sampling interval
         }
     }
 }
 
+void vSamplerTask2(void *pvParameters) {
+    tagged_adc_sample_t sample;
+    BaseType_t xResult;
+
+    Serial.println("Sampler Task 2 (AIN2-AIN3) started.");
+
+    for (;;) {
+        if (xSemaphoreTake(xAdcMutex, portMAX_DELAY)) {
+            pc_ads1220.select_mux_channels(MUX_AIN2_AIN3);
+            pc_ads1220.set_conv_mode_single_shot();
+            pc_ads1220.Start_Conv();
+
+            while (digitalRead(ADS1220_DRDY_PIN) == HIGH);
+
+            sample.value = pc_ads1220.Read_Data_Samples();
+            sample.source = 1;  // Tag for sensor 2
+
+            xSemaphoreGive(xAdcMutex);
+
+            xResult = xQueueSend(xAdcQueue, &sample, 10);
+            if (xResult != pdPASS) {
+                Serial.println("Task2: Queue full!");
+            }
+
+            vTaskDelay(pdMS_TO_TICKS(10)); // Sampling interval
+        }
+    }
+}
 
 static void sendDataBatch(int32_t *dataBuffer, size_t count) {
     Serial.printf("Processing batch of %d samples...\n", count);
@@ -225,13 +270,18 @@ void setup() {
     Serial.println("BLE Advertising started. Waiting for client connection...");
 
     // Create the Queue
-    xAdcQueue = xQueueCreate(ADC_QUEUE_LENGTH, sizeof(int32_t));
+    xAdcQueue = xQueueCreate(ADC_QUEUE_LENGTH, sizeof(tagged_adc_sample_t));
     if (xAdcQueue == NULL) {
         Serial.println("Error creating ADC queue!");
         while(1);
     } else {
          Serial.println("ADC Queue created.");
     }
+
+    // Create the mutex
+    xAdcMutex = xSemaphoreCreateMutex();
+
+    if (xAdcMutex == NULL) {Serial.println("Error creating mutex!"); while (1);} else {Serial.println("Mutex created.");}
 
     // Create Tasks
     BaseType_t taskResult;
