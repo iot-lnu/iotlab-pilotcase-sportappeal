@@ -31,7 +31,8 @@ typedef struct {
 }tagged_adc_sample_t
 
 QueueHandle_t xAdcQueue;
-TaskHandle_t xSamplerTaskHandle = NULL;
+TaskHandle_t xSamplerTask1Handle = NULL;
+TaskHandle_t xSamplerTask2Handle = NULL;
 TaskHandle_t xSenderTaskHandle = NULL;
 SemaphoreHandle_t xAdcMutex;
 
@@ -132,44 +133,34 @@ void vSamplerTask2(void *pvParameters) {
     }
 }
 
-static void sendDataBatch(int32_t *dataBuffer, size_t count) {
-    Serial.printf("Processing batch of %d samples...\n", count);
+static void sendDataBatch(tagged_adc_sample_t *dataBuffer, size_t count) {
+    Serial.printf("Sending %d tagged samples...\n", count);
 
-    // Check if a BLE client is connected
     if (!deviceConnected) {
         Serial.println("No BLE client connected. Skipping send.");
         return;
     }
 
-    Serial.println("Sending data over BLE...");
+    for (size_t i = 0; i < count; i++) {
+        uint8_t packet[5]; // 4 bytes for int32_t value + 1 byte for source
+        memcpy(packet, &dataBuffer[i].value, 4);
+        packet[4] = dataBuffer[i].source;
 
-    // Calculate total bytes to send
-    size_t totalBytes = count * sizeof(int32_t);
-    uint8_t* bytePtr = (uint8_t*)dataBuffer;
-
-    // Send data in chunks
-    for (size_t i = 0; i < totalBytes; i += BLE_CHUNK_SIZE) {
-        size_t bytesToSend = BLE_CHUNK_SIZE;
-        // Check if this is the last chunk and adjust size if necessary
-        if (i + BLE_CHUNK_SIZE > totalBytes) {
-            bytesToSend = totalBytes - i;
-        }
-
-        // Set the characteristic value to the current chunk
-        pDataCharacteristic->setValue(&bytePtr[i], bytesToSend);
-
-        // Notify the connected client
+        pDataCharacteristic->setValue(packet, sizeof(packet));
         pDataCharacteristic->notify();
 
-        // IMPORTANT: Add a small delay. Sending notifications too fast can overwhelm
-        // the BLE stack or the client.
         vTaskDelay(pdMS_TO_TICKS(2));
 
         if (!deviceConnected) {
-             Serial.println("BLE client disconnected during send!");
-             break; // Stop sending this batch
+            Serial.println("Client disconnected mid-batch.");
+            break;
         }
     }
+
+    if (deviceConnected) {
+        Serial.println("Batch sent over BLE.");
+    }
+}
 
     if (deviceConnected) {
       Serial.println("Batch sent over BLE.");
@@ -194,8 +185,7 @@ static void sendDataBatch(int32_t *dataBuffer, size_t count) {
 
 
 void vSenderTask(void *pvParameters) {
-
-    static int32_t dataBuffer[SENDER_BATCH_SIZE];
+    static tagged_adc_sample_t dataBuffer[SENDER_BATCH_SIZE];
     int bufferIndex = 0;
     BaseType_t xResult;
 
@@ -214,8 +204,8 @@ void vSenderTask(void *pvParameters) {
         }
 
         if (deviceConnected != oldDeviceConnected) {
-           oldDeviceConnected = deviceConnected;
-           Serial.printf("Connection status changed: %s\n", deviceConnected ? "Connected" : "Disconnected");
+            oldDeviceConnected = deviceConnected;
+            Serial.printf("Connection status changed: %s\n", deviceConnected ? "Connected" : "Disconnected");
         }
     }
 }
@@ -285,8 +275,11 @@ void setup() {
 
     // Create Tasks
     BaseType_t taskResult;
-    taskResult = xTaskCreate(vSamplerTask, "SamplerTask", SAMPLER_STACK_SIZE, NULL, SAMPLER_TASK_PRIORITY, &xSamplerTaskHandle);
-    if (taskResult != pdPASS) { Serial.println("Error creating Sampler task!"); while(1); } else { Serial.println("Sampler Task created."); }
+    taskResult = xTaskCreate(vSamplerTask1, "SamplerTask1", SAMPLER_STACK_SIZE, NULL, SAMPLER_TASK_PRIORITY, &xSamplerTask1Handle);
+    if (taskResult != pdPASS) { Serial.println("Error creating Sampler task1!"); while(1); } else { Serial.println("Sampler Task1 created."); }
+
+    taskResult = xTaskCreate(vSamplerTask2, "SamplerTask2", SAMPLER_STACK_SIZE, NULL, SAMPLER_TASK_PRIORITY, &xSamplerTask2Handle);
+    if (taskResult != pdPASS) { Serial.println("Error creating Sampler task2!"); while(1); } else { Serial.println("Sampler Task2 created."); }
 
     taskResult = xTaskCreate(vSenderTask, "SenderTask", SENDER_STACK_SIZE, NULL, SENDER_TASK_PRIORITY, &xSenderTaskHandle);
     if (taskResult != pdPASS) { Serial.println("Error creating Sender task!"); while(1); } else { Serial.println("Sender Task created."); }
