@@ -158,11 +158,6 @@ static void sendDataBatch(tagged_adc_sample_t *dataBuffer, size_t count) {
     }
 
     if (deviceConnected) {
-        Serial.println("Batch sent over BLE.");
-    }
-}
-
-    if (deviceConnected) {
       Serial.println("Batch sent over BLE.");
     }
     // --- End BLE Send ---
