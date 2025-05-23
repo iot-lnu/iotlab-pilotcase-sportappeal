@@ -11,10 +11,10 @@
 #define VREF 3.300
 #define VFSR VREF/PGA
 #define FSR (((long int)1<<23)-1)
-#define LEFT_OFFSET 14900
-#define RIGHT_OFFSET 16800
-#define COUNTS_TO_NEWTONS_LEFT 0.001095f
-#define COUNTS_TO_NEWTONS_RIGHT 0.0008938f
+#define LEFT_OFFSET 14900 //offset for left sensor found through measurements
+#define RIGHT_OFFSET 16800 //offset for right sensor found through measurements
+#define COUNTS_TO_NEWTONS_LEFT 0.001095f // conversion factor for left sensor
+#define COUNTS_TO_NEWTONS_RIGHT 0.0008938f // conversion factor for right sensor
 #define MV_TO_NEWTONS 294.3f // 294.3 mV/N
 
 #define ADS1220_CS_PIN    7
@@ -25,12 +25,12 @@ Protocentral_ADS1220 pc_ads1220;
 #define MQTT_MAX_PACKET_SIZE 5120
 
 #define ADC_QUEUE_LENGTH    50000
-#define SENDER_BATCH_SIZE   100
+#define SENDER_BATCH_SIZE   100 // Number of samples to send in one batch
 #define SAMPLER_TASK_PRIORITY (configMAX_PRIORITIES - 1)
 #define SENDER_TASK_PRIORITY  (tskIDLE_PRIORITY + 2)
 #define SAMPLER_STACK_SIZE   (configMINIMAL_STACK_SIZE * 8)
 #define SENDER_STACK_SIZE    (configMINIMAL_STACK_SIZE * 10)
-#define JSON_BUFFER_SIZE     5000 //1024
+#define JSON_BUFFER_SIZE     5000 //Maximum size of JSON payload
 
 typedef struct {
     float right;
@@ -48,7 +48,7 @@ const char* ssid = "***REMOVED***";
 const char* password = "***REMOVED***";
 
 // MQTT server details
-const char* mqtt_server = "***REMOVED***";
+const char* mqtt_server = "***REMOVED***"; // MQTT server IP address
 const int mqtt_port = ***REMOVED***;
 const char* mqtt_user = "***REMOVED***"; 
 const char* mqtt_key  = "***REMOVED***";
@@ -62,11 +62,6 @@ void vSamplerTask(void *pvParameters) {
     Sample_t sample;
 
     for (;;) {
-       /* Serial.println(isPaused ? "Paused" : "Running");
-        if (isPaused) {
-            vTaskDelay(pdMS_TO_TICKS(100));
-            continue;
-        }*/ // Debugging
 
         uint32_t now = millis();
         xSemaphoreTake(xAdcMutex, portMAX_DELAY);
@@ -91,15 +86,13 @@ void vSamplerTask(void *pvParameters) {
 
         sample.timestamp = now;
         sample.left = force_left;   
-        //sample.left = raw_left; //debugging
         sample.right = force_right; 
-        //sample.right = raw_right; //debugging
-        Serial.printf("Left: %.2f N, Right: %.2f N\n", force_left, force_right);
+        //Serial.printf("Left: %.2f N, Right: %.2f N\n", force_left, force_right); // Debugging
         if (xQueueSend(xAdcQueue, &sample, 10) != pdPASS) {
             Serial.println("Sampler: Queue full!");
         }
 
-        vTaskDelay(pdMS_TO_TICKS(2)); // ~500 Hz
+        vTaskDelay(pdMS_TO_TICKS(2)); // ~500 Hz set to 1 for 1000 Hz 
     }
 }
 
@@ -119,41 +112,9 @@ static void sendDataBatch(Sample_t *dataBuffer, size_t count) {
     if (client.connected()) {
         client.publish(mqtt_data_topic, payload);
         Serial.printf("Published %d samples to MQTT.\n", count);
-        //client.publish(mqtt_topic, "hello", 5);// debugging
-        //const char* testPayload = "{\"sensor_id\":1,\"value\":123}";
-        //client.publish(mqtt_topic, testPayload);
-        //Serial.println(payload); // Debugging
-        Serial.println(len);  // Debugging
-        Serial.println(millis()); // Debugging
     } else {
         Serial.println("MQTT not connected. Skipping publish.");
     }
-}
-
-void flushSampleQueue() {
-    Sample_t dataBuffer[SENDER_BATCH_SIZE];
-    int bufferIndex = 0;
-
-    Serial.println("Flushing ADC queue...");
-
-    while (uxQueueMessagesWaiting(xAdcQueue) > 0) {
-        if (xQueueReceive(xAdcQueue, &dataBuffer[bufferIndex], 0) == pdPASS) {
-            bufferIndex++;
-            if (bufferIndex >= SENDER_BATCH_SIZE) {
-                sendDataBatch(dataBuffer, bufferIndex);
-                bufferIndex = 0;
-            }
-        } else {
-            break;
-        }
-    }
-
-    // Send any remaining partial batch
-    if (bufferIndex > 0) {
-        sendDataBatch(dataBuffer, bufferIndex);
-    }
-
-    Serial.println("ADC queue flushed.");
 }
 
 // --- Sender Task ---
@@ -271,7 +232,6 @@ void setup() {
 
     Serial.println("Setup complete.");
 }
-
 
 void loop() {
     vTaskDelay(pdMS_TO_TICKS(100)); // Minimal loop use
