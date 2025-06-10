@@ -15,17 +15,17 @@
 #define COUNTS_TO_NEWTONS_RIGHT 0.0008938f
 
 // --- Pin Config ---
-#define LEFT_ADS1220_CS_PIN     7
-#define LEFT_ADS1220_DRDY_PIN   2
-#define RIGHT_ADS1220_CS_PIN    8
-#define RIGHT_ADS1220_DRDY_PIN  4
+#define LEFT_ADS1220_CS_PIN     8
+#define LEFT_ADS1220_DRDY_PIN   4
+#define RIGHT_ADS1220_CS_PIN    7
+#define RIGHT_ADS1220_DRDY_PIN  2
 
 Protocentral_ADS1220 pc_ads1220right;
 Protocentral_ADS1220 pc_ads1220left;
 
 // --- FreeRTOS ---
 #define ADC_QUEUE_LENGTH    50000
-#define SENDER_BATCH_SIZE   100
+#define SENDER_BATCH_SIZE   50
 #define SAMPLER_TASK_PRIORITY (configMAX_PRIORITIES - 1)
 #define SENDER_TASK_PRIORITY  (tskIDLE_PRIORITY + 2)
 #define SAMPLER_STACK_SIZE   (configMINIMAL_STACK_SIZE * 8)
@@ -78,29 +78,33 @@ static void sendDataBatch(Sample_t *dataBuffer, size_t count) {
 
 // --- Polling Sampler Task ---
 void vSamplerTask(void *pvParameters) {
-    Sample_t sample;
+    for(;;){
+        bool gotLeft = false, gotRight = false;
+        Sample_t sample;
+        uint32_t now = millis();
 
-    for (;;) {
-        // Wait for both DRDY pins to go LOW
-        while (digitalRead(LEFT_ADS1220_DRDY_PIN) == HIGH ||
-               digitalRead(RIGHT_ADS1220_DRDY_PIN) == HIGH) {
-            vTaskDelay(pdMS_TO_TICKS(1));  // Avoid tight polling loop
+        while (!gotLeft || !gotRight) {
+            if (!gotLeft && digitalRead(LEFT_ADS1220_DRDY_PIN) == LOW) {
+                int32_t raw_left = pc_ads1220left.Read_Data_Samples();
+                sample.left = raw_left;
+                gotLeft = true;
+                //Serial.print("L");
+                //Serial.println(raw_left);
+            }
+
+            if (!gotRight && digitalRead(RIGHT_ADS1220_DRDY_PIN) == LOW) {
+                int32_t raw_right = pc_ads1220right.Read_Data_Samples();
+                sample.right = raw_right;
+                gotRight = true;
+                //Serial.print("R");
+                //Serial.println(raw_right);
+            }
+
+            // Short delay to avoid tight loop
+            vTaskDelay(pdMS_TO_TICKS(1));
         }
 
-        xSemaphoreTake(xAdcMutex, portMAX_DELAY);
-
-        uint32_t now = millis();
-        int32_t raw_left = pc_ads1220left.Read_Data_Samples();
-        float force_left = (raw_left - LEFT_OFFSET) * COUNTS_TO_NEWTONS_LEFT;
-
-        int32_t raw_right = pc_ads1220right.Read_Data_Samples();
-        float force_right = (raw_right - RIGHT_OFFSET) * COUNTS_TO_NEWTONS_RIGHT;
-
-        xSemaphoreGive(xAdcMutex);
-
         sample.timestamp = now;
-        sample.left = force_left;
-        sample.right = force_right;
 
         if (xQueueSend(xAdcQueue, &sample, 0) != pdPASS) {
             Serial.println("Sampler: Queue full!");
@@ -113,10 +117,10 @@ void vSenderTask(void *pvParameters) {
     static Sample_t dataBuffer[SENDER_BATCH_SIZE];
     int bufferIndex = 0;
     BaseType_t xResult;
-
     while (!client.connected()) {
         vTaskDelay(pdMS_TO_TICKS(500));
     }
+    //vTaskDelay(pdMS_TO_TICKS(1000)); // Allow time for MQTT connection
 
     for (;;) {
         xResult = xQueueReceive(xAdcQueue, &dataBuffer[bufferIndex], portMAX_DELAY);
@@ -160,7 +164,7 @@ void setup() {
     Serial.begin(115200);
     while (!Serial);
     Serial.println("--- ADS1220 Dual Polling Sampler ---");
-
+    SPI.begin(13,12,11); // SCK, MISO, MOSI pins 
     // Connect WiFi
     WiFi.begin(ssid, password);
     while (WiFi.status() != WL_CONNECTED) {
@@ -181,7 +185,11 @@ void setup() {
     pc_ads1220left.set_conv_mode_continuous();
     pc_ads1220left.select_mux_channels(MUX_AIN0_AIN1);
     pc_ads1220left.Start_Conv();
-
+    delayMicroseconds(50); // Allow time for ADS1220 to stabilize
+    Serial.println(pc_ads1220left.readRegister(CONFIG_REG0_ADDRESS), HEX);
+    Serial.println(pc_ads1220left.readRegister(CONFIG_REG1_ADDRESS), HEX);
+    Serial.println(pc_ads1220left.readRegister(CONFIG_REG2_ADDRESS), HEX);
+    Serial.println(pc_ads1220left.readRegister(CONFIG_REG3_ADDRESS), HEX);
     // Init ADS1220 Right
     pc_ads1220right.begin(RIGHT_ADS1220_CS_PIN, RIGHT_ADS1220_DRDY_PIN);
     pc_ads1220right.set_pga_gain(PGA_GAIN_128);
@@ -190,11 +198,25 @@ void setup() {
     pc_ads1220right.set_conv_mode_continuous();
     pc_ads1220right.select_mux_channels(MUX_AIN0_AIN1);
     pc_ads1220right.Start_Conv();
+    delayMicroseconds(50); // Allow time for ADS1220 to stabilize
+    Serial.println(pc_ads1220right.readRegister(CONFIG_REG0_ADDRESS), HEX);
+    Serial.println(pc_ads1220right.readRegister(CONFIG_REG1_ADDRESS), HEX);
+    Serial.println(pc_ads1220right.readRegister(CONFIG_REG2_ADDRESS), HEX);
+    Serial.println(pc_ads1220right.readRegister(CONFIG_REG3_ADDRESS), HEX);
+    
 
     // MQTT setup
     client.setServer(mqtt_server, mqtt_port);
     client.setKeepAlive(60);
     client.setBufferSize(5120);
+    client.connect(mqtt_user, mqtt_user, mqtt_key);
+    if (!client.connected()) {
+        Serial.println("MQTT connection failed!");
+    } else {
+        Serial.println("MQTT connected successfully.");
+    }
+
+
 
     // Queues and tasks
     xAdcQueue = xQueueCreate(ADC_QUEUE_LENGTH, sizeof(Sample_t));
