@@ -9,10 +9,10 @@
 // --- Constants ---
 #define PGA 128
 #define VREF 3.300
-#define LEFT_OFFSET 14900
-#define RIGHT_OFFSET 16800
-#define COUNTS_TO_NEWTONS_LEFT 0.001095f
-#define COUNTS_TO_NEWTONS_RIGHT 0.0008938f
+#define LEFT_OFFSET -12700 //moved responsibility to backend
+#define RIGHT_OFFSET -17500 //moved responsibility to backend
+#define COUNTS_TO_NEWTONS_LEFT 0.001095f //moved responsibility to backend
+#define COUNTS_TO_NEWTONS_RIGHT 0.0008938f //moved responsibility to backend
 
 // --- Pin Config ---
 #define LEFT_ADS1220_CS_PIN     8
@@ -71,6 +71,7 @@ static void sendDataBatch(Sample_t *dataBuffer, size_t count) {
     if (client.connected()) {
         client.publish(mqtt_data_topic, payload);
         Serial.printf("Published %d samples to MQTT.\n", count);
+        Serial.println(millis());//debug
     } else {
         Serial.println("MQTT not connected. Skipping publish.");
     }
@@ -78,6 +79,7 @@ static void sendDataBatch(Sample_t *dataBuffer, size_t count) {
 
 // --- Polling Sampler Task ---
 void vSamplerTask(void *pvParameters) {
+    int count = 0;
     for(;;){
         bool gotLeft = false, gotRight = false;
         Sample_t sample;
@@ -86,23 +88,28 @@ void vSamplerTask(void *pvParameters) {
         while (!gotLeft || !gotRight) {
             if (!gotLeft && digitalRead(LEFT_ADS1220_DRDY_PIN) == LOW) {
                 int32_t raw_left = pc_ads1220left.Read_Data_Samples();
-                sample.left = raw_left;
                 gotLeft = true;
+                sample.left = raw_left;
                 //Serial.print("L");
                 //Serial.println(raw_left);
             }
 
             if (!gotRight && digitalRead(RIGHT_ADS1220_DRDY_PIN) == LOW) {
                 int32_t raw_right = pc_ads1220right.Read_Data_Samples();
-                sample.right = raw_right;
                 gotRight = true;
+                sample.right = raw_right;
                 //Serial.print("R");
                 //Serial.println(raw_right);
             }
-
-            // Short delay to avoid tight loop
-            vTaskDelay(pdMS_TO_TICKS(1));
+            
+            vTaskDelay(pdMS_TO_TICKS(1)); // Short delay to avoid tight loop
         }
+        count++;
+            if (count == 1000) {
+                count = 0;
+                Serial.print("Sampled 1000 pairs: ");
+                Serial.println(millis());
+            }
 
         sample.timestamp = now;
 
@@ -203,6 +210,7 @@ void setup() {
     Serial.println(pc_ads1220right.readRegister(CONFIG_REG1_ADDRESS), HEX);
     Serial.println(pc_ads1220right.readRegister(CONFIG_REG2_ADDRESS), HEX);
     Serial.println(pc_ads1220right.readRegister(CONFIG_REG3_ADDRESS), HEX);
+    Serial.println("ADS1220 initialized.");
     
 
     // MQTT setup
