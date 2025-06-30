@@ -82,6 +82,7 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
   if (len == 0) return;
 
   String message = String((char *)data);
+  Serial.printf("WebSocket message received: %s\n", message.c_str());
   if (message == "start") {
     // Erase previous file
     LittleFS.remove(CSV_PATH);
@@ -95,7 +96,7 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
     sampleIndex = 0; // Reset sample index
     systemState = Sampling_state;
     Serial.println("Sampling started");
-  } else if (message == "stop") {
+  } else if (message == "stop" || message == "stopt") {
     csvFile.flush(); // Ensure all data is written
     csvFile.close(); // Close the file when sampling stops
     systemState = Sending_state;
@@ -170,10 +171,10 @@ void vSamplerTask(void *pvParameters) {
             delayMicroseconds(10);
         }
         
-            /*if (index%1000 == 0) {//_
+            if (sampleIndex%1000 == 0) {//_
                 Serial.print("Sampled 1000 pairs: ");
                 Serial.println(millis());
-            }*/
+            }
 
         sample.timestamp = now;
         if (csvFile) {
@@ -242,7 +243,7 @@ void reconnectMQTT() {// no longer needed can be removed
     }
 }
 
-void vMqttLoopTask(void *pvParameters) {
+void vMqttLoopTask(void *pvParameters) {// no longer needed can be removed
     for (;;) {
         client.loop();
         if (!client.connected()) {
@@ -268,13 +269,6 @@ void setup() {
     Serial.print("IP address: ");
     Serial.println(WiFi.localIP());
 
-    // Setup WebSocket
-    ws.onEvent(onEvent);
-    server.addHandler(&ws);
-    server.serveStatic("/", LittleFS, "/").setDefaultFile("index.html");
-    server.begin();
-    Serial.println("Web server started.");
-
     // Initialize LittleFS
     if (!LittleFS.begin(true)) {
         Serial.println("LittleFS Mount Failed");
@@ -288,6 +282,23 @@ void setup() {
         Serial.printf("  %s - size: %d\n", file.name(), file.size());
         file = root.openNextFile();
     }
+
+    // Setup WebSocket
+    ws.onEvent(onEvent);
+    server.addHandler(&ws);
+    server.serveStatic("/", LittleFS, "/").setDefaultFile("index.html");
+    server.onNotFound([](AsyncWebServerRequest *request){
+        request->send(404, "text/plain", "Not Found");
+    });
+    server.begin();
+    Serial.println("Web server started.");
+    delay(500);
+
+    File f = LittleFS.open("/index.html", "r");
+    while (f.available()) {
+        Serial.write(f.read());  // Print file content to serial monitor
+    }
+    f.close();
 
     // Init pins
     pinMode(LEFT_ADS1220_DRDY_PIN, INPUT_PULLUP);
@@ -349,6 +360,6 @@ void setup() {
 }
 
 void loop() {
-    vTaskDelay(pdMS_TO_TICKS(100));
+    vTaskDelay(pdMS_TO_TICKS(1000));
     Serial.println(systemState);
 }
