@@ -3,8 +3,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'dart:developer' as developer;
 import '../../models/user.dart';
 import '../../services/users_data.dart';
-import '../../components/three_dots_menu.dart';
-import '../../components/bottom_navigation.dart';
+import '../../components/standard_page_layout.dart';
+import '../../components/profile_icon.dart';
+import '../../components/custom_text_field.dart';
 import '../add_user_success_screen.dart';
 
 class AddUserScreen extends StatefulWidget {
@@ -18,11 +19,14 @@ class _AddUserScreenState extends State<AddUserScreen> {
   final _formKey = GlobalKey<FormState>();
   final _usernameController = TextEditingController();
   final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  bool _isTestUser = true;
 
   @override
   void dispose() {
     _usernameController.dispose();
     _emailController.dispose();
+    _passwordController.dispose();
     super.dispose();
   }
 
@@ -31,6 +35,7 @@ class _AddUserScreenState extends State<AddUserScreen> {
       // Get form values and trim whitespace
       final username = _usernameController.text.trim();
       final email = _emailController.text.trim();
+      final password = _passwordController.text;
 
       // Check if user already exists
       final existingUsers = UsersData.getAllUsers();
@@ -55,7 +60,7 @@ class _AddUserScreenState extends State<AddUserScreen> {
       }
 
       developer.log(
-        'Creating user: $username / $email / admin-created',
+        'Creating user: $username / $email / ${password.length} chars / isTest: $_isTestUser',
         name: 'AddUserScreen',
       );
 
@@ -83,219 +88,133 @@ class _AddUserScreenState extends State<AddUserScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFF1E1E1E),
-      resizeToAvoidBottomInset: false, // Prevent automatic resizing
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Custom App Bar
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // Back button section
-                  GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.arrow_back_ios,
-                          color: const Color(0xFF75F94C),
-                          size: 20,
-                        ),
-                        const SizedBox(width: 10),
-                        Text(
-                          'BACK',
-                          style: GoogleFonts.montserrat(
-                            color: const Color(0xFF75F94C),
-                            fontSize: 15,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 3,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  // Menu icon
-                  const ThreeDotsMenu(),
-                ],
-              ),
+    return StandardPageLayout(
+      title: 'ADD USER',
+      currentRoute: '/admin/add-user',
+      child: Column(
+        children: [
+          const SizedBox(height: 20),
+
+          // Profile Icon (same as login page)
+          const ProfileIcon(size: 80),
+
+          const SizedBox(height: 40),
+
+          // Form Fields Section (same as login page)
+          Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                // Username Field (using CustomTextField like login)
+                CustomTextField(
+                  label: 'ENTER USERNAME',
+                  controller: _usernameController,
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Please enter a username';
+                    }
+                    if (value.trim().length < 3) {
+                      return 'Username must be at least 3 characters';
+                    }
+                    if (value.trim().length > 20) {
+                      return 'Username must be less than 20 characters';
+                    }
+                    return null;
+                  },
+                ),
+
+                const SizedBox(height: 30),
+
+                // Email Field (using CustomTextField like login)
+                CustomTextField(
+                  label: 'ENTER EMAIL',
+                  controller: _emailController,
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Please enter an email';
+                    }
+                    // Use same email validation as AuthService
+                    if (!RegExp(
+                      r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                    ).hasMatch(value.trim())) {
+                      return 'Please enter a valid email address';
+                    }
+                    return null;
+                  },
+                ),
+
+                const SizedBox(height: 30),
+
+                // Password Field (using CustomTextField like login)
+                CustomTextField(
+                  label: 'ENTER PASSWORD',
+                  controller: _passwordController,
+                  isPassword: true,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter a password';
+                    }
+                    if (value.length < 6) {
+                      return 'Password must be at least 6 characters';
+                    }
+                    return null;
+                  },
+                ),
+              ],
             ),
+          ),
 
-            // Main Content Container
-            Expanded(
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF1A1919),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 30.0,
-                        vertical: 25.0,
-                      ),
-                      child: Form(
-                        key: _formKey,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            // Title
-                            Text(
-                              'ADD USER',
-                              style: GoogleFonts.montserrat(
-                                color: Colors.white,
-                                fontSize: 15,
-                                fontWeight: FontWeight.w700,
-                                letterSpacing: 3,
-                              ),
-                            ),
-                            const SizedBox(height: 10),
-                            Container(
-                              width: 135,
-                              height: 1,
-                              color: Colors.white,
-                            ),
-                            const SizedBox(height: 40),
+          const SizedBox(height: 30),
 
-                            // Username Field
-                            TextFormField(
-                              controller: _usernameController,
-                              style: const TextStyle(color: Colors.white),
-                              validator: (value) {
-                                if (value == null || value.trim().isEmpty) {
-                                  return 'Please enter a username';
-                                }
-                                if (value.trim().length < 3) {
-                                  return 'Username must be at least 3 characters';
-                                }
-                                if (value.trim().length > 20) {
-                                  return 'Username must be less than 20 characters';
-                                }
-                                return null;
-                              },
-                              decoration: InputDecoration(
-                                hintText: 'ENTER USERNAME',
-                                hintStyle: TextStyle(
-                                  color: Colors.grey[500],
-                                  fontSize: 14,
-                                ),
-                                enabledBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.white),
-                                ),
-                                focusedBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: const Color(0xFF75F94C),
-                                  ),
-                                ),
-                                errorBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.red),
-                                ),
-                                focusedErrorBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.red),
-                                ),
-                                errorStyle: GoogleFonts.montserrat(
-                                  color: Colors.red,
-                                  fontSize: 11,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 30),
-
-                            // Email Field
-                            TextFormField(
-                              controller: _emailController,
-                              style: const TextStyle(color: Colors.white),
-                              keyboardType: TextInputType.emailAddress,
-                              validator: (value) {
-                                if (value == null || value.trim().isEmpty) {
-                                  return 'Please enter an email';
-                                }
-                                // Use same email validation as AuthService
-                                if (!RegExp(
-                                  r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-                                ).hasMatch(value.trim())) {
-                                  return 'Please enter a valid email address';
-                                }
-                                return null;
-                              },
-                              decoration: InputDecoration(
-                                hintText: 'ENTER EMAIL',
-                                hintStyle: TextStyle(
-                                  color: Colors.grey[500],
-                                  fontSize: 14,
-                                ),
-                                enabledBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.white),
-                                ),
-                                focusedBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: const Color(0xFF75F94C),
-                                  ),
-                                ),
-                                errorBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.red),
-                                ),
-                                focusedErrorBorder: UnderlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.red),
-                                ),
-                                errorStyle: GoogleFonts.montserrat(
-                                  color: Colors.red,
-                                  fontSize: 11,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 30),
-
-                            // Note: Password is auto-generated for admin-created users
-                            const SizedBox(
-                              height: 80,
-                            ), // Fixed height instead of Spacer
-                            // Add User Button
-                            SizedBox(
-                              width: double.infinity,
-                              height: 50,
-                              child: ElevatedButton(
-                                onPressed: _submitForm,
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFF007340),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(25),
-                                  ),
-                                  padding: EdgeInsets.zero,
-                                ),
-                                child: Text(
-                                  'ADD USER',
-                                  style: GoogleFonts.montserrat(
-                                    color: Colors.white,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w700,
-                                    letterSpacing: 3,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ), // Add some bottom padding
-                          ],
-                        ),
-                      ),
-                    ),
+          // Test User Switch
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.white.withValues(alpha: 0.3)),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'IS TEST USER',
+                  style: AppTextStyles.buttonText.copyWith(
+                    color: Colors.white.withValues(alpha: 0.7),
+                    fontSize: 12,
                   ),
                 ),
-              ),
+                Switch(
+                  value: _isTestUser,
+                  onChanged: (value) {
+                    setState(() {
+                      _isTestUser = value;
+                    });
+                  },
+                  activeColor: const Color(0xFF75F94C),
+                  activeTrackColor: const Color(
+                    0xFF75F94C,
+                  ).withValues(alpha: 0.3),
+                  inactiveThumbColor: Colors.white.withValues(alpha: 0.7),
+                  inactiveTrackColor: Colors.white.withValues(alpha: 0.2),
+                ),
+              ],
             ),
+          ),
 
-            // Bottom Navigation
-            const BottomNavigation(currentRoute: '/admin/add-user'),
-          ],
-        ),
+          const SizedBox(height: 30),
+
+          // Add User Button (same width as login button)
+          SizedBox(
+            width: 227,
+            child: ElevatedButton(
+              onPressed: _submitForm,
+              style: AppButtonStyles.primaryButton,
+              child: Text('ADD USER', style: AppTextStyles.buttonText),
+            ),
+          ),
+
+          const Spacer(),
+        ],
       ),
     );
   }

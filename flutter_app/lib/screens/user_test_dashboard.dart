@@ -445,10 +445,14 @@ class _UserTestDashboardState extends State<UserTestDashboard> {
                                       vertical: 4,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: Colors.green.withOpacity(0.2),
+                                      color: Colors.green.withValues(
+                                        alpha: 0.2,
+                                      ),
                                       borderRadius: BorderRadius.circular(12),
                                       border: Border.all(
-                                        color: Colors.green.withOpacity(0.5),
+                                        color: Colors.green.withValues(
+                                          alpha: 0.5,
+                                        ),
                                       ),
                                     ),
                                     child: Row(
@@ -575,9 +579,9 @@ class _UserTestDashboardState extends State<UserTestDashboard> {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [
@@ -633,7 +637,7 @@ class _UserTestDashboardState extends State<UserTestDashboard> {
           child: Row(
             children: [
               // Timestamp
-              Container(
+              SizedBox(
                 width: 80,
                 child: Text(
                   _formatTimestamp(reading['timestamp']),
@@ -650,7 +654,7 @@ class _UserTestDashboardState extends State<UserTestDashboard> {
               Expanded(
                 child: Row(
                   children: [
-                    Container(
+                    SizedBox(
                       width: 60,
                       child: Text(
                         'L: ${reading['left'] ?? 0}',
@@ -662,7 +666,7 @@ class _UserTestDashboardState extends State<UserTestDashboard> {
                       ),
                     ),
                     const SizedBox(width: 16),
-                    Container(
+                    SizedBox(
                       width: 60,
                       child: Text(
                         'R: ${reading['right'] ?? 0}',

@@ -78,47 +78,6 @@ class _UserListScreenState extends State<UserListScreen> {
     _loadUsers();
   }
 
-  void _showUserDetails(User user) {
-    showDialog(
-      context: context,
-      builder:
-          (context) => AlertDialog(
-            title: Text(user.username),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ListTile(
-                  title: const Text('Email'),
-                  subtitle: Text(user.email),
-                  leading: const Icon(Icons.email),
-                ),
-                ListTile(
-                  title: const Text('Role'),
-                  subtitle: Text(
-                    user.isAdmin ? 'Administrator' : 'Regular User',
-                  ),
-                  leading: const Icon(Icons.admin_panel_settings),
-                ),
-                ListTile(
-                  title: const Text('Created'),
-                  subtitle: Text(
-                    '${user.createdAt.day}/${user.createdAt.month}/${user.createdAt.year}',
-                  ),
-                  leading: const Icon(Icons.calendar_today),
-                ),
-              ],
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text('CLOSE'),
-              ),
-            ],
-          ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -321,10 +280,13 @@ class _UserListScreenState extends State<UserListScreen> {
                                               const SizedBox(width: 15),
                                               Expanded(
                                                 child: GestureDetector(
-                                                  onTap:
-                                                      () => _showUserDetails(
-                                                        user,
-                                                      ),
+                                                  onTap: () {
+                                                    Navigator.pushNamed(
+                                                      context,
+                                                      '/user-profile',
+                                                      arguments: user,
+                                                    );
+                                                  },
                                                   child: Text(
                                                     user.username.toUpperCase(),
                                                     style:

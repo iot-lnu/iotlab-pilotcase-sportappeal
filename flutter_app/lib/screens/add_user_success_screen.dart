@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../models/user.dart';
-import '../components/three_dots_menu.dart';
-import '../components/bottom_navigation.dart';
+import '../components/standard_page_layout.dart';
 
 class AddUserSuccessScreen extends StatelessWidget {
   final User user;
@@ -11,162 +9,59 @@ class AddUserSuccessScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFF1E1E1E),
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Custom App Bar
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // Back button section
-                  GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.arrow_back_ios,
-                          color: const Color(0xFF75F94C),
-                          size: 20,
-                        ),
-                        const SizedBox(width: 10),
-                        Text(
-                          'BACK',
-                          style: GoogleFonts.montserrat(
-                            color: const Color(0xFF75F94C),
-                            fontSize: 15,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 3,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  // Menu icon
-                  const ThreeDotsMenu(),
-                ],
-              ),
+    return StandardPageLayout(
+      title: 'ADD USER',
+      currentRoute: '/add-user-success',
+      child: Column(
+        children: [
+          const SizedBox(height: 60),
+
+          // Success Icon
+          Container(
+            width: 100,
+            height: 100,
+            decoration: BoxDecoration(
+              color: Colors.transparent,
+              shape: BoxShape.circle,
+              border: Border.all(color: const Color(0xFF75F94C), width: 3),
             ),
-
-            // Main Content Container
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF1A1919),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 38.0,
-                      vertical: 27.0,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        // Title
-                        Text(
-                          'ADD USER',
-                          style: GoogleFonts.montserrat(
-                            color: Colors.white,
-                            fontSize: 15,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 3,
-                          ),
-                        ),
-                        const SizedBox(height: 15),
-                        Container(width: 135, height: 1, color: Colors.white),
-                        const SizedBox(height: 80),
-
-                        // Success icon
-                        Container(
-                          width: 100,
-                          height: 100,
-                          decoration: BoxDecoration(
-                            color: Colors.transparent,
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: const Color(0xFF75F94C),
-                              width: 3,
-                            ),
-                          ),
-                          child: const Center(
-                            child: Icon(
-                              Icons.check,
-                              color: Color(0xFF75F94C),
-                              size: 48,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 40),
-                        Text(
-                          'USER ADD',
-                          style: GoogleFonts.montserrat(
-                            color: Colors.white,
-                            fontSize: 15,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 3,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 5),
-                        Text(
-                          'SUCCCESSFULLY!',
-                          style: GoogleFonts.montserrat(
-                            color: Colors.white,
-                            fontSize: 15,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 3,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        const Spacer(),
-                        SizedBox(
-                          width: 250,
-                          height: 50,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              // Navigate to user profile instead of admin users list
-                              Navigator.pushReplacementNamed(
-                                context,
-                                '/user-profile',
-                                arguments: user,
-                              );
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF007340),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(25),
-                              ),
-                              padding: EdgeInsets.zero,
-                            ),
-                            child: Text(
-                              'GO TO USERS PAGE',
-                              style: GoogleFonts.montserrat(
-                                color: Colors.white,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w700,
-                                letterSpacing: 3,
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
+            child: const Center(
+              child: Icon(Icons.check, color: Color(0xFF75F94C), size: 48),
             ),
+          ),
 
-            // Bottom Navigation
-            const BottomNavigation(currentRoute: '/add-user-success'),
-          ],
-        ),
+          const SizedBox(height: 40),
+
+          // Success Message
+          Text(
+            'USER ADD',
+            style: AppTextStyles.pageTitle,
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 5),
+          Text(
+            'SUCCESSFULLY!',
+            style: AppTextStyles.pageTitle,
+            textAlign: TextAlign.center,
+          ),
+
+          const Spacer(),
+
+          // Navigation Button
+          SizedBox(
+            width: double.infinity,
+            height: 50,
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.pushReplacementNamed(context, '/admin/users');
+              },
+              style: AppButtonStyles.primaryButton,
+              child: Text('GO TO USERS PAGE', style: AppTextStyles.buttonText),
+            ),
+          ),
+
+          const SizedBox(height: 20),
+        ],
       ),
     );
   }

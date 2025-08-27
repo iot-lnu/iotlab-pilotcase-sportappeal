@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../models/user.dart';
-import '../components/three_dots_menu.dart';
-import '../components/bottom_navigation.dart';
+import '../components/standard_page_layout.dart';
 import '../services/users_data.dart';
 import 'choose_test_screen.dart';
 
@@ -13,174 +12,61 @@ class UserProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFF1E1E1E),
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Custom App Bar
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // Back button section
-                  GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.arrow_back_ios,
-                          color: const Color(0xFF75F94C),
-                          size: 20,
-                        ),
-                        const SizedBox(width: 10),
-                        Text(
-                          'BACK',
-                          style: GoogleFonts.montserrat(
-                            color: const Color(0xFF75F94C),
-                            fontSize: 15,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 3,
-                          ),
-                        ),
-                      ],
-                    ),
+    return StandardPageLayout(
+      title: user.username,
+      currentRoute: '/user-profile',
+      child: Column(
+        children: [
+          const SizedBox(height: 40),
+
+          // Run Test Button
+          SizedBox(
+            width: double.infinity,
+            height: 50,
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ChooseTestScreen(user: user),
                   ),
-                  // Menu icon
-                  const ThreeDotsMenu(),
-                ],
-              ),
+                );
+              },
+              style: AppButtonStyles.primaryButton,
+              child: Text('RUN TEST', style: AppTextStyles.buttonText),
             ),
-            // Main Content Container
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF1A1919),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 38.0,
-                      vertical: 27.0,
-                    ),
-                    child: Column(
-                      children: [
-                        Text(
-                          user.username.toUpperCase(),
-                          style: GoogleFonts.montserrat(
-                            color: Colors.white,
-                            fontSize: 15,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 3,
-                          ),
-                        ),
-                        const SizedBox(height: 15),
-                        Container(width: 135, height: 1, color: Colors.white),
-                        const SizedBox(height: 60),
+          ),
 
-                        // Run Test Button
-                        SizedBox(
-                          width: double.infinity,
-                          height: 50,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder:
-                                      (context) => ChooseTestScreen(user: user),
-                                ),
-                              );
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF007340),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(25),
-                              ),
-                              padding: EdgeInsets.zero,
-                            ),
-                            child: Text(
-                              'RUN TEST',
-                              style: GoogleFonts.montserrat(
-                                color: Colors.white,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w700,
-                                letterSpacing: 3,
-                              ),
-                            ),
-                          ),
-                        ),
+          const SizedBox(height: 20),
 
-                        const SizedBox(height: 20),
-
-                        // Users Report Button
-                        SizedBox(
-                          width: double.infinity,
-                          height: 50,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              _showUsersReport(context);
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF007340),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(25),
-                              ),
-                              padding: EdgeInsets.zero,
-                            ),
-                            child: Text(
-                              'USERS REPORT',
-                              style: GoogleFonts.montserrat(
-                                color: Colors.white,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w700,
-                                letterSpacing: 3,
-                              ),
-                            ),
-                          ),
-                        ),
-
-                        const SizedBox(height: 20),
-
-                        // Delete User Button
-                        SizedBox(
-                          width: double.infinity,
-                          height: 50,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              _showDeleteConfirmation(context);
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF007340),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(25),
-                              ),
-                              padding: EdgeInsets.zero,
-                            ),
-                            child: Text(
-                              'DELETE USER',
-                              style: GoogleFonts.montserrat(
-                                color: Colors.white,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w700,
-                                letterSpacing: 3,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
+          // Users Report Button
+          SizedBox(
+            width: double.infinity,
+            height: 50,
+            child: ElevatedButton(
+              onPressed: () {
+                _showUsersReport(context);
+              },
+              style: AppButtonStyles.primaryButton,
+              child: Text('USERS REPORT', style: AppTextStyles.buttonText),
             ),
-            // Bottom Navigation
-            const BottomNavigation(currentRoute: '/user-profile'),
-          ],
-        ),
+          ),
+
+          const SizedBox(height: 20),
+
+          // Delete User Button
+          SizedBox(
+            width: double.infinity,
+            height: 50,
+            child: ElevatedButton(
+              onPressed: () {
+                _showDeleteConfirmation(context);
+              },
+              style: AppButtonStyles.primaryButton,
+              child: Text('DELETE USER', style: AppTextStyles.buttonText),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -222,7 +108,7 @@ class UserProfileScreen extends StatelessWidget {
                     width: 100,
                     height: 100,
                     decoration: BoxDecoration(
-                      color: const Color(0xFF007340).withOpacity(0.2),
+                      color: const Color(0xFF007340).withValues(alpha: 0.2),
                       shape: BoxShape.circle,
                       border: Border.all(
                         color: const Color(0xFF007340),
@@ -256,7 +142,7 @@ class UserProfileScreen extends StatelessWidget {
                     'Users report functionality is currently under development. This feature will allow you to view and export detailed reports about user activities and test results.',
                     textAlign: TextAlign.center,
                     style: GoogleFonts.montserrat(
-                      color: Colors.white.withOpacity(0.8),
+                      color: Colors.white.withValues(alpha: 0.8),
                       fontSize: 14,
                       fontWeight: FontWeight.w400,
                       height: 1.5,
@@ -334,7 +220,7 @@ class UserProfileScreen extends StatelessWidget {
                     width: 100,
                     height: 100,
                     decoration: BoxDecoration(
-                      color: Colors.red.withOpacity(0.2),
+                      color: Colors.red.withValues(alpha: 0.2),
                       shape: BoxShape.circle,
                       border: Border.all(color: Colors.red, width: 2),
                     ),
@@ -365,7 +251,7 @@ class UserProfileScreen extends StatelessWidget {
                     'Are you sure you want to delete your account? This action cannot be undone and you will lose all your data.',
                     textAlign: TextAlign.center,
                     style: GoogleFonts.montserrat(
-                      color: Colors.white.withOpacity(0.8),
+                      color: Colors.white.withValues(alpha: 0.8),
                       fontSize: 14,
                       fontWeight: FontWeight.w400,
                       height: 1.5,
