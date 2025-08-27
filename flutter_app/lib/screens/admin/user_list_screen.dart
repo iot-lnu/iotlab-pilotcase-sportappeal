@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../models/user.dart';
 import '../../services/users_data.dart';
 import '../../components/three_dots_menu.dart';
+import '../../components/bottom_navigation.dart';
 import 'dart:developer' as developer;
 
 class UserListScreen extends StatefulWidget {
@@ -211,7 +212,6 @@ class _UserListScreenState extends State<UserListScreen> {
                                         controller: _searchController,
                                         onChanged: _filterUsers,
                                         decoration: InputDecoration(
-                                          hintText: 'DAVID BECKHAM',
                                           hintStyle: TextStyle(
                                             color: Colors.grey[400],
                                             fontSize: 14,
@@ -367,15 +367,7 @@ class _UserListScreenState extends State<UserListScreen> {
                                   ),
                         ),
 
-                        // Page indicator at the bottom (optional)
-                        Container(
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                          child: Icon(
-                            Icons.keyboard_arrow_down,
-                            color: const Color(0xFF75F94C),
-                            size: 30,
-                          ),
-                        ),
+                        // Removed page indicator arrow as requested
                       ],
                     ),
                   ),
@@ -384,29 +376,9 @@ class _UserListScreenState extends State<UserListScreen> {
             ),
 
             // Bottom Navigation
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 40.0,
-                vertical: 15.0,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Icon(Icons.home, color: Colors.yellow, size: 30),
-                  Icon(Icons.person, color: Colors.yellow, size: 30),
-                ],
-              ),
-            ),
+            const BottomNavigation(currentRoute: '/admin/users'),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: const Color(0xFF007340),
-        onPressed: () async {
-          await Navigator.pushNamed(context, '/admin/add-user');
-          _loadUsers();
-        },
-        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }

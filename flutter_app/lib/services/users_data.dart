@@ -17,17 +17,6 @@ class UsersData {
           createdAt: DateTime.now().subtract(const Duration(days: 30)),
         ),
       );
-
-      // Add regular user
-      _users.add(
-        User(
-          id: 'user_001',
-          username: 'TestUser',
-          email: 'test@example.com',
-          isAdmin: false,
-          createdAt: DateTime.now().subtract(const Duration(days: 15)),
-        ),
-      );
     }
   }
 

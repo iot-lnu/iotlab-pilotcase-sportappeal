@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../models/user.dart';
 import '../components/three_dots_menu.dart';
+import '../components/bottom_navigation.dart';
 
 class AddUserSuccessScreen extends StatelessWidget {
   final User user;
@@ -49,6 +50,7 @@ class AddUserSuccessScreen extends StatelessWidget {
                 ],
               ),
             ),
+
             // Main Content Container
             Expanded(
               child: Padding(
@@ -64,7 +66,9 @@ class AddUserSuccessScreen extends StatelessWidget {
                       vertical: 27.0,
                     ),
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
+                        // Title
                         Text(
                           'ADD USER',
                           style: GoogleFonts.montserrat(
@@ -77,6 +81,7 @@ class AddUserSuccessScreen extends StatelessWidget {
                         const SizedBox(height: 15),
                         Container(width: 135, height: 1, color: Colors.white),
                         const SizedBox(height: 80),
+
                         // Success icon
                         Container(
                           width: 100,
@@ -125,6 +130,7 @@ class AddUserSuccessScreen extends StatelessWidget {
                           height: 50,
                           child: ElevatedButton(
                             onPressed: () {
+                              // Navigate to user profile instead of admin users list
                               Navigator.pushReplacementNamed(
                                 context,
                                 '/user-profile',
@@ -156,20 +162,9 @@ class AddUserSuccessScreen extends StatelessWidget {
                 ),
               ),
             ),
+
             // Bottom Navigation
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 40.0,
-                vertical: 15.0,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Icon(Icons.home, color: Colors.yellow, size: 30),
-                  Icon(Icons.person, color: Colors.yellow, size: 30),
-                ],
-              ),
-            ),
+            const BottomNavigation(currentRoute: '/add-user-success'),
           ],
         ),
       ),

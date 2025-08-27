@@ -7,6 +7,7 @@ import 'screens/auth/register_screen.dart';
 import 'screens/admin/admin_dashboard.dart';
 import 'screens/admin/add_user_screen.dart';
 import 'screens/admin/user_list_screen.dart';
+import 'screens/admin/settings_under_development_screen.dart';
 
 import 'screens/user_profile_screen.dart';
 import 'screens/realtime_loadcell_dashboard.dart';
@@ -81,8 +82,9 @@ class IdrrottApp extends StatelessWidget {
                 user: ModalRoute.of(context)!.settings.arguments as dynamic,
               ),
             ),
-        // Setting route can be added when implemented
-        // '/admin/settings': (context) => const SettingsScreen(),
+        '/admin/settings':
+            (context) =>
+                const AuthGuard(child: SettingsUnderDevelopmentScreen()),
       },
     );
   }
