@@ -3,8 +3,8 @@ import 'package:provider/provider.dart';
 import '../../components/back_button.dart';
 import '../../components/primary_button.dart';
 import '../../components/three_dots_menu.dart';
+import '../../components/bottom_navigation.dart';
 import '../../theme/colors.dart';
-import '../../models/user.dart';
 import '../../services/auth_service.dart';
 
 class AdminDashboard extends StatefulWidget {
@@ -143,67 +143,6 @@ class _AdminDashboardState extends State<AdminDashboard> {
                                   );
                                 },
                               ),
-                              const SizedBox(height: 30),
-                              Container(
-                                width: double.infinity,
-                                height: 50,
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    // Use the same logout logic as the 3 dots menu
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return AlertDialog(
-                                          title: const Text('Logout'),
-                                          content: const Text(
-                                            'Are you sure you want to log out?',
-                                          ),
-                                          actions: <Widget>[
-                                            TextButton(
-                                              child: const Text('Cancel'),
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                            ),
-                                            TextButton(
-                                              child: const Text('Logout'),
-                                              onPressed: () {
-                                                final authService =
-                                                    Provider.of<AuthService>(
-                                                      context,
-                                                      listen: false,
-                                                    );
-                                                authService.logout();
-                                                Navigator.of(context).pop();
-                                                Navigator.of(
-                                                  context,
-                                                ).pushReplacementNamed('/');
-                                              },
-                                            ),
-                                          ],
-                                        );
-                                      },
-                                    );
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.red,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(30.0),
-                                    ),
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 16.0,
-                                    ),
-                                  ),
-                                  child: const Text(
-                                    'LOGOUT',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                ),
-                              ),
 
                               const Spacer(),
                             ],
@@ -212,38 +151,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                       ),
                     ),
 
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 16.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          IconButton(
-                            icon: const Icon(
-                              Icons.home,
-                              color: Color(0xFFFFE000),
-                              size: 32,
-                            ),
-                            onPressed:
-                                () => Navigator.pushReplacementNamed(
-                                  context,
-                                  '/',
-                                ),
-                          ),
-                          IconButton(
-                            icon: const Icon(
-                              Icons.person,
-                              color: Colors.white,
-                              size: 32,
-                            ),
-                            onPressed:
-                                () => Navigator.pushReplacementNamed(
-                                  context,
-                                  '/admin',
-                                ),
-                          ),
-                        ],
-                      ),
-                    ),
+                    const BottomNavigation(currentRoute: '/admin'),
                   ],
                 ),
               ),

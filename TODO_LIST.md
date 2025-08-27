@@ -187,7 +187,6 @@
    - [ ] Implement PDF generation (pdf package)
    - [ ] Create report templates
    - [ ] Add data export functionality
-   - [ ] Implement backup system
 
 2. **Data management**
    - [ ] Add test result history

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../models/user.dart';
+import '../components/bottom_navigation.dart';
 import '../services/loadcell_api_service.dart';
 
 class UserTestDashboard extends StatefulWidget {
@@ -563,25 +564,7 @@ class _UserTestDashboardState extends State<UserTestDashboard> {
             ),
 
             // Bottom Navigation
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 40.0,
-                vertical: 15.0,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Icon(Icons.home, color: Colors.yellow, size: 30),
-                  Icon(Icons.fitness_center, color: Colors.yellow, size: 30),
-                  Icon(
-                    Icons.insert_chart_outlined_rounded,
-                    color: Colors.yellow,
-                    size: 30,
-                  ),
-                  Icon(Icons.person, color: Colors.yellow, size: 30),
-                ],
-              ),
-            ),
+            const BottomNavigation(),
           ],
         ),
       ),

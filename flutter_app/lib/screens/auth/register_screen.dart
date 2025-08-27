@@ -161,8 +161,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               if (value == null || value.isEmpty) {
                                 return 'Please enter an email';
                               }
-                              if (!value.contains('@')) {
-                                return 'Please enter a valid email';
+                              // Use AuthService validation for better email regex
+                              if (!RegExp(
+                                r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                              ).hasMatch(value.trim())) {
+                                return 'Please enter a valid email address';
                               }
                               return null;
                             },
@@ -321,8 +324,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   if (value == null || value.isEmpty) {
                                     return 'Please enter an email';
                                   }
-                                  if (!value.contains('@')) {
-                                    return 'Please enter a valid email';
+                                  // Use AuthService validation for better email regex
+                                  if (!RegExp(
+                                    r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                                  ).hasMatch(value.trim())) {
+                                    return 'Please enter a valid email address';
                                   }
                                   return null;
                                 },

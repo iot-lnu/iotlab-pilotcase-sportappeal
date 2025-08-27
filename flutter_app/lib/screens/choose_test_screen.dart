@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../models/user.dart';
 import '../components/three_dots_menu.dart';
+import '../components/bottom_navigation.dart';
 import 'user_test_dashboard.dart';
+import 'not_implemented_screen.dart';
 
 class ChooseTestScreen extends StatelessWidget {
   final User user;
@@ -113,7 +115,7 @@ class ChooseTestScreen extends StatelessWidget {
                               context,
                               MaterialPageRoute(
                                 builder:
-                                    (context) => UserTestDashboard(
+                                    (context) => NotImplementedScreen(
                                       user: user,
                                       testType: 'Iso squat',
                                     ),
@@ -133,7 +135,7 @@ class ChooseTestScreen extends StatelessWidget {
                               context,
                               MaterialPageRoute(
                                 builder:
-                                    (context) => UserTestDashboard(
+                                    (context) => NotImplementedScreen(
                                       user: user,
                                       testType: 'Bench press',
                                     ),
@@ -153,7 +155,7 @@ class ChooseTestScreen extends StatelessWidget {
                               context,
                               MaterialPageRoute(
                                 builder:
-                                    (context) => UserTestDashboard(
+                                    (context) => NotImplementedScreen(
                                       user: user,
                                       testType: 'Custom',
                                     ),
@@ -171,25 +173,7 @@ class ChooseTestScreen extends StatelessWidget {
             ),
 
             // Bottom Navigation
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 40.0,
-                vertical: 15.0,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Icon(Icons.home, color: Colors.yellow, size: 30),
-                  Icon(Icons.fitness_center, color: Colors.yellow, size: 30),
-                  Icon(
-                    Icons.insert_chart_outlined_rounded,
-                    color: Colors.yellow,
-                    size: 30,
-                  ),
-                  Icon(Icons.person, color: Colors.yellow, size: 30),
-                ],
-              ),
-            ),
+            const BottomNavigation(currentRoute: '/choose-test'),
           ],
         ),
       ),

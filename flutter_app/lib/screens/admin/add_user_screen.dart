@@ -4,6 +4,7 @@ import 'dart:developer' as developer;
 import '../../models/user.dart';
 import '../../services/users_data.dart';
 import '../../components/three_dots_menu.dart';
+import '../../components/bottom_navigation.dart';
 import '../add_user_success_screen.dart';
 
 class AddUserScreen extends StatefulWidget {
@@ -17,34 +18,50 @@ class _AddUserScreenState extends State<AddUserScreen> {
   final _formKey = GlobalKey<FormState>();
   final _usernameController = TextEditingController();
   final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final bool _isTestUser = true;
 
   @override
   void dispose() {
     _usernameController.dispose();
     _emailController.dispose();
-    _passwordController.dispose();
     super.dispose();
   }
 
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
-      // Create a new user object
-      final username = _usernameController.text;
-      final email = _emailController.text;
-      final password = _passwordController.text;
+      // Get form values and trim whitespace
+      final username = _usernameController.text.trim();
+      final email = _emailController.text.trim();
+
+      // Check if user already exists
+      final existingUsers = UsersData.getAllUsers();
+      final userExists = existingUsers.any(
+        (user) =>
+            user.email.toLowerCase() == email.toLowerCase() ||
+            user.username.toLowerCase() == username.toLowerCase(),
+      );
+
+      if (userExists) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'User with this email or username already exists!',
+              style: GoogleFonts.montserrat(color: Colors.white, fontSize: 12),
+            ),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 3),
+          ),
+        );
+        return;
+      }
 
       developer.log(
-        'Creating user: $username / $email / ${password.length} chars / isTest: $_isTestUser',
+        'Creating user: $username / $email / admin-created',
         name: 'AddUserScreen',
       );
 
       // Create a new user
       final newUser = User(
-        id:
-            DateTime.now().millisecondsSinceEpoch
-                .toString(), // Simple unique ID
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
         username: username,
         email: email,
         isAdmin: false, // Regular users are not admins
@@ -147,9 +164,21 @@ class _AddUserScreenState extends State<AddUserScreen> {
                             const SizedBox(height: 40),
 
                             // Username Field
-                            TextField(
+                            TextFormField(
                               controller: _usernameController,
                               style: const TextStyle(color: Colors.white),
+                              validator: (value) {
+                                if (value == null || value.trim().isEmpty) {
+                                  return 'Please enter a username';
+                                }
+                                if (value.trim().length < 3) {
+                                  return 'Username must be at least 3 characters';
+                                }
+                                if (value.trim().length > 20) {
+                                  return 'Username must be less than 20 characters';
+                                }
+                                return null;
+                              },
                               decoration: InputDecoration(
                                 hintText: 'ENTER USERNAME',
                                 hintStyle: TextStyle(
@@ -164,14 +193,37 @@ class _AddUserScreenState extends State<AddUserScreen> {
                                     color: const Color(0xFF75F94C),
                                   ),
                                 ),
+                                errorBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.red),
+                                ),
+                                focusedErrorBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.red),
+                                ),
+                                errorStyle: GoogleFonts.montserrat(
+                                  color: Colors.red,
+                                  fontSize: 11,
+                                ),
                               ),
                             ),
                             const SizedBox(height: 30),
 
                             // Email Field
-                            TextField(
+                            TextFormField(
                               controller: _emailController,
                               style: const TextStyle(color: Colors.white),
+                              keyboardType: TextInputType.emailAddress,
+                              validator: (value) {
+                                if (value == null || value.trim().isEmpty) {
+                                  return 'Please enter an email';
+                                }
+                                // Use same email validation as AuthService
+                                if (!RegExp(
+                                  r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                                ).hasMatch(value.trim())) {
+                                  return 'Please enter a valid email address';
+                                }
+                                return null;
+                              },
                               decoration: InputDecoration(
                                 hintText: 'ENTER EMAIL',
                                 hintStyle: TextStyle(
@@ -186,23 +238,21 @@ class _AddUserScreenState extends State<AddUserScreen> {
                                     color: const Color(0xFF75F94C),
                                   ),
                                 ),
-                              ),
-                              keyboardType: TextInputType.emailAddress,
-                            ),
-                            const SizedBox(height: 30),
-
-                            // Password Field (Hidden as it's not in the design but needed for functionality)
-                            Opacity(
-                              opacity: 0,
-                              child: TextField(
-                                controller: _passwordController,
-                                obscureText: true,
-                                decoration: InputDecoration(
-                                  hintText: 'Password',
+                                errorBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.red),
+                                ),
+                                focusedErrorBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.red),
+                                ),
+                                errorStyle: GoogleFonts.montserrat(
+                                  color: Colors.red,
+                                  fontSize: 11,
                                 ),
                               ),
                             ),
+                            const SizedBox(height: 30),
 
+                            // Note: Password is auto-generated for admin-created users
                             const SizedBox(
                               height: 80,
                             ), // Fixed height instead of Spacer
@@ -243,19 +293,7 @@ class _AddUserScreenState extends State<AddUserScreen> {
             ),
 
             // Bottom Navigation
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 40.0,
-                vertical: 15.0,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Icon(Icons.home, color: Colors.yellow, size: 30),
-                  Icon(Icons.person, color: Colors.yellow, size: 30),
-                ],
-              ),
-            ),
+            const BottomNavigation(currentRoute: '/admin/add-user'),
           ],
         ),
       ),
