@@ -53,10 +53,13 @@ class AddUserSuccessScreen extends StatelessWidget {
             height: 50,
             child: ElevatedButton(
               onPressed: () {
-                Navigator.pushReplacementNamed(context, '/admin/users');
+                Navigator.pushNamed(context, '/user-profile', arguments: user);
               },
               style: AppButtonStyles.primaryButton,
-              child: Text('GO TO USERS PAGE', style: AppTextStyles.buttonText),
+              child: Text(
+                'GO TO USER PROFILE',
+                style: AppTextStyles.buttonText,
+              ),
             ),
           ),
 
