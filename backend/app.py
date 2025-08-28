@@ -14,6 +14,23 @@ import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# Variable to store original werkzeug logger level
+_original_werkzeug_level = None
+
+def set_quiet_mode(quiet=True):
+    """Enable or disable quiet mode for werkzeug logs when not testing"""
+    global _original_werkzeug_level
+    werkzeug_logger = logging.getLogger('werkzeug')
+    
+    if quiet and _original_werkzeug_level is None:
+        # Store original level and set to ERROR to suppress INFO logs
+        _original_werkzeug_level = werkzeug_logger.level
+        werkzeug_logger.setLevel(logging.ERROR)
+    elif not quiet and _original_werkzeug_level is not None:
+        # Restore original level
+        werkzeug_logger.setLevel(_original_werkzeug_level)
+        _original_werkzeug_level = None
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your-secret-key-here'
 CORS(app, origins="*")
@@ -136,6 +153,9 @@ def start_test():
     session_start_time = datetime.now()
     sample_counter = 0
     
+    # Enable verbose logging when testing starts
+    set_quiet_mode(False)
+    
     # Create new CSV file for this test session
     csv_file = create_csv_file()
     
@@ -165,6 +185,9 @@ def stop_test():
         return jsonify({'error': 'No ESP32 device connected'}), 400
     
     is_testing = False
+    
+    # Enable quiet mode when testing stops (suppress status/reading logs)
+    set_quiet_mode(True)
     
     # Send stop command to ESP32 devices via Raw WebSocket
     send_command_to_esp32('stop')
@@ -807,6 +830,10 @@ def create_templates():
 
 if __name__ == '__main__':
     create_templates()
+    
+    # Start in quiet mode (suppress repetitive API logs when not testing)
+    set_quiet_mode(True)
+    
     logger.info("Starting Flask server with Raw WebSocket support...")
     logger.info("Dashboard available at: http://localhost:5000")
     logger.info("Raw WebSocket endpoint: ws://localhost:5000/ws")
@@ -816,6 +843,7 @@ if __name__ == '__main__':
     logger.info("  POST /api/stop_test - Stop test session")
     logger.info("  GET  /api/session_data - Get current session data")
     logger.info("  GET  /api/latest_reading - Get latest sensor reading")
+    logger.info("Note: API request logs are suppressed when not testing to reduce noise")
     
     # Use Flask app with Raw WebSocket support
     app.run(host='0.0.0.0', port=5000, debug=True)
