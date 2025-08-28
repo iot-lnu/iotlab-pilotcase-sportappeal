@@ -20,7 +20,7 @@ class _AddUserScreenState extends State<AddUserScreen> {
   final _usernameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  bool _isTestUser = true;
+
 
   @override
   void dispose() {
@@ -60,7 +60,7 @@ class _AddUserScreenState extends State<AddUserScreen> {
       }
 
       developer.log(
-        'Creating user: $username / $email / ${password.length} chars / isTest: $_isTestUser',
+        'Creating user: $username / $email / ${password.length} chars',
         name: 'AddUserScreen',
       );
 
@@ -159,43 +159,6 @@ class _AddUserScreenState extends State<AddUserScreen> {
                     }
                     return null;
                   },
-                ),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: 30),
-
-          // Test User Switch
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.white.withValues(alpha: 0.3)),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'IS TEST USER',
-                  style: AppTextStyles.buttonText.copyWith(
-                    color: Colors.white.withValues(alpha: 0.7),
-                    fontSize: 12,
-                  ),
-                ),
-                Switch(
-                  value: _isTestUser,
-                  onChanged: (value) {
-                    setState(() {
-                      _isTestUser = value;
-                    });
-                  },
-                  activeColor: const Color(0xFF75F94C),
-                  activeTrackColor: const Color(
-                    0xFF75F94C,
-                  ).withValues(alpha: 0.3),
-                  inactiveThumbColor: Colors.white.withValues(alpha: 0.7),
-                  inactiveTrackColor: Colors.white.withValues(alpha: 0.2),
                 ),
               ],
             ),
