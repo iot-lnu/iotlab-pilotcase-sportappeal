@@ -17,7 +17,6 @@ class _AddUserScreenState extends State<AddUserScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
-
   @override
   void dispose() {
     _usernameController.dispose();
@@ -99,7 +98,7 @@ class _AddUserScreenState extends State<AddUserScreen> {
               },
             ),
 
-            const SizedBox(height: 30),
+            const SizedBox(height: 60),
 
             const Spacer(),
 
