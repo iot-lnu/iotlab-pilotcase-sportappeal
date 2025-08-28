@@ -11,6 +11,8 @@ import 'screens/admin/settings_under_development_screen.dart';
 
 import 'screens/user_profile_screen.dart';
 import 'screens/realtime_loadcell_dashboard.dart';
+import 'screens/test_results_screen.dart';
+import 'screens/printable_results_screen.dart';
 
 import 'screens/choose_test_screen.dart';
 import 'services/loadcell_api_service.dart';
@@ -85,6 +87,18 @@ class IdrrottApp extends StatelessWidget {
         '/admin/settings':
             (context) =>
                 const AuthGuard(child: SettingsUnderDevelopmentScreen()),
+        '/test-results':
+            (context) => AuthGuard(
+              child: TestResultsScreen(
+                user: ModalRoute.of(context)!.settings.arguments as dynamic,
+              ),
+            ),
+        '/printable-results':
+            (context) => AuthGuard(
+              child: PrintableResultsScreen(
+                user: ModalRoute.of(context)!.settings.arguments as dynamic,
+              ),
+            ),
       },
     );
   }

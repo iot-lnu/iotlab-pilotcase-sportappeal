@@ -65,8 +65,8 @@ volatile SystemState systemState = Idle_state;
 // ============================================================================
 
 // WiFi credentials
-const char* ssid = "***REMOVED***";
-const char* password = "***REMOVED***";
+const char* ssid = "iotlab";
+const char* password = "modermodemet";
 
 // Socket.IO configuration  
 const char* websocket_host = "192.168.1.158";  // Change this to your computer's network IP

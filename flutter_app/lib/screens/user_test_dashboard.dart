@@ -371,6 +371,39 @@ class _UserTestDashboardState extends State<UserTestDashboard> {
 
                     const SizedBox(height: 20),
 
+                    // Save Result Button
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        onPressed: () {
+                          Navigator.pushNamed(
+                            context,
+                            '/test-results',
+                            arguments: widget.user,
+                          );
+                        },
+                        icon: const Icon(Icons.save, color: Colors.white),
+                        label: Text(
+                          'SAVE RESULT',
+                          style: GoogleFonts.montserrat(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 1,
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF007340),
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 20),
+
                     // Loadcell Readings Section
                     const Text(
                       'Real-Time Sensor History',
