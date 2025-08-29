@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../models/user.dart';
 import '../components/standard_page_layout.dart';
+import '../services/backend_config.dart';
 
 class TestResultsScreenV2 extends StatefulWidget {
   final User user;
@@ -58,7 +59,7 @@ class _TestResultsScreenV2State extends State<TestResultsScreenV2> {
     try {
       // Get latest CSV file from backend
       final response = await http.get(
-        Uri.parse('http://localhost:5000/api/csv_files'),
+        Uri.parse('${BackendConfig.baseUrl}/api/csv_files'),
       );
 
       if (response.statusCode == 200) {
@@ -89,7 +90,7 @@ class _TestResultsScreenV2State extends State<TestResultsScreenV2> {
   Future<void> _loadCsvData(String filename) async {
     try {
       final response = await http.get(
-        Uri.parse('http://localhost:5000/api/download/$filename'),
+        Uri.parse('${BackendConfig.baseUrl}/api/download/$filename'),
       );
 
       if (response.statusCode == 200) {

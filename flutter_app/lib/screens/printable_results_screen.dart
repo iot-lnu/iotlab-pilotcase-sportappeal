@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import '../models/user.dart';
+import '../services/backend_config.dart';
 
 class PrintableResultsScreen extends StatefulWidget {
   final User user;
@@ -32,7 +33,7 @@ class _PrintableResultsScreenState extends State<PrintableResultsScreen> {
     try {
       // Get latest CSV file from backend
       final response = await http.get(
-        Uri.parse('http://localhost:5000/api/csv_files'),
+        Uri.parse('${BackendConfig.baseUrl}/api/csv_files'),
       );
 
       if (response.statusCode == 200) {
@@ -63,7 +64,7 @@ class _PrintableResultsScreenState extends State<PrintableResultsScreen> {
   Future<void> _loadCsvData(String filename) async {
     try {
       final response = await http.get(
-        Uri.parse('http://localhost:5000/api/download/$filename'),
+        Uri.parse('${BackendConfig.baseUrl}/api/download/$filename'),
       );
 
       if (response.statusCode == 200) {
@@ -257,7 +258,9 @@ class _PrintableResultsScreenState extends State<PrintableResultsScreen> {
 
   Widget _buildPrintableContent() {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.all(
+        MediaQuery.of(context).size.width * 0.05,
+      ), // Responsive padding
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -286,7 +289,9 @@ class _PrintableResultsScreenState extends State<PrintableResultsScreen> {
   Widget _buildHeader() {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.all(
+        MediaQuery.of(context).size.width * 0.05,
+      ), // Responsive padding
       decoration: BoxDecoration(
         border: Border.all(color: Colors.black, width: 2),
         borderRadius: BorderRadius.circular(8),
@@ -294,63 +299,63 @@ class _PrintableResultsScreenState extends State<PrintableResultsScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          // Responsive layout that works on all screen sizes
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'IMTP TEST RESULTS',
-                    style: GoogleFonts.montserrat(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    'Participant: ${widget.user.username}',
-                    style: GoogleFonts.montserrat(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black87,
-                    ),
-                  ),
-                  Text(
-                    'Email: ${widget.user.email}',
-                    style: GoogleFonts.montserrat(
-                      fontSize: 14,
-                      color: Colors.black87,
-                    ),
-                  ),
-                ],
+              Text(
+                'IMTP TEST RESULTS',
+                style: GoogleFonts.montserrat(
+                  fontSize:
+                      MediaQuery.of(context).size.width *
+                      0.06, // Responsive font size
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
+              const SizedBox(height: 15),
+              Text(
+                'Participant: ${widget.user.username}',
+                style: GoogleFonts.montserrat(
+                  fontSize: MediaQuery.of(context).size.width * 0.04,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black87,
+                ),
+              ),
+              Text(
+                'Email: ${widget.user.email}',
+                style: GoogleFonts.montserrat(
+                  fontSize: MediaQuery.of(context).size.width * 0.035,
+                  color: Colors.black87,
+                ),
+              ),
+              const SizedBox(height: 15),
+              // Date and duration info below main title to avoid overflow
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
                     'Test Date: ${widget.testDate ?? DateTime.now().toString().split('.').first}',
                     style: GoogleFonts.montserrat(
-                      fontSize: 14,
+                      fontSize: MediaQuery.of(context).size.width * 0.035,
                       color: Colors.black87,
                     ),
                   ),
                   Text(
                     'Duration: ${_analysis['testDuration']?.toStringAsFixed(1) ?? 'N/A'}s',
                     style: GoogleFonts.montserrat(
-                      fontSize: 14,
-                      color: Colors.black87,
-                    ),
-                  ),
-                  Text(
-                    'Data Points: ${_testData.length}',
-                    style: GoogleFonts.montserrat(
-                      fontSize: 14,
+                      fontSize: MediaQuery.of(context).size.width * 0.035,
                       color: Colors.black87,
                     ),
                   ),
                 ],
+              ),
+              Text(
+                'Data Points: ${_testData.length}',
+                style: GoogleFonts.montserrat(
+                  fontSize: MediaQuery.of(context).size.width * 0.035,
+                  color: Colors.black87,
+                ),
               ),
             ],
           ),
@@ -362,7 +367,9 @@ class _PrintableResultsScreenState extends State<PrintableResultsScreen> {
   Widget _buildChartSection() {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.all(
+        MediaQuery.of(context).size.width * 0.05,
+      ), // Responsive padding
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey.shade300),
         borderRadius: BorderRadius.circular(8),
@@ -379,15 +386,20 @@ class _PrintableResultsScreenState extends State<PrintableResultsScreen> {
             ),
           ),
           const SizedBox(height: 20),
-          SizedBox(height: 300, child: LineChart(_createPrintChart())),
+          SizedBox(
+            height:
+                MediaQuery.of(context).size.height * 0.35, // Responsive height
+            child: LineChart(_createPrintChart()),
+          ),
           const SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+          // Responsive legend that wraps on smaller screens
+          Wrap(
+            alignment: WrapAlignment.center,
+            spacing: 16,
+            runSpacing: 8,
             children: [
               _buildLegendItem('Total Force', Colors.green),
-              const SizedBox(width: 20),
               _buildLegendItem('Left Foot', Colors.blue),
-              const SizedBox(width: 20),
               _buildLegendItem('Right Foot', Colors.orange),
             ],
           ),
@@ -398,12 +410,24 @@ class _PrintableResultsScreenState extends State<PrintableResultsScreen> {
 
   Widget _buildLegendItem(String label, Color color) {
     return Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        Container(width: 16, height: 3, color: color),
-        const SizedBox(width: 8),
+        Container(
+          width: MediaQuery.of(context).size.width * 0.04, // Responsive width
+          height: 3,
+          color: color,
+        ),
+        SizedBox(
+          width: MediaQuery.of(context).size.width * 0.02,
+        ), // Responsive spacing
         Text(
           label,
-          style: GoogleFonts.montserrat(fontSize: 12, color: Colors.black87),
+          style: GoogleFonts.montserrat(
+            fontSize:
+                MediaQuery.of(context).size.width *
+                0.03, // Responsive font size
+            color: Colors.black87,
+          ),
         ),
       ],
     );
@@ -431,8 +455,8 @@ class _PrintableResultsScreenState extends State<PrintableResultsScreen> {
       gridData: FlGridData(
         show: true,
         drawVerticalLine: true,
-        horizontalInterval: 200,
-        verticalInterval: 0.5,
+        horizontalInterval: 500, // Increased for cleaner grid
+        verticalInterval: 1.0, // Increased for cleaner grid
         getDrawingHorizontalLine: (value) {
           return FlLine(color: Colors.grey.shade300, strokeWidth: 1);
         },
@@ -447,14 +471,19 @@ class _PrintableResultsScreenState extends State<PrintableResultsScreen> {
         bottomTitles: AxisTitles(
           sideTitles: SideTitles(
             showTitles: true,
-            reservedSize: 30,
-            interval: 0.5,
+            reservedSize: 35, // Increased space for labels
+            interval: 1.0, // Increased interval for cleaner labels
             getTitlesWidget: (value, meta) {
               return SideTitleWidget(
                 axisSide: meta.axisSide,
                 child: Text(
                   '${value.toStringAsFixed(1)}s',
-                  style: const TextStyle(color: Colors.black, fontSize: 10),
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize:
+                        MediaQuery.of(context).size.width *
+                        0.025, // Responsive font size
+                  ),
                 ),
               );
             },
@@ -463,14 +492,19 @@ class _PrintableResultsScreenState extends State<PrintableResultsScreen> {
         leftTitles: AxisTitles(
           sideTitles: SideTitles(
             showTitles: true,
-            interval: 200,
-            reservedSize: 50,
+            interval: 500, // Increased interval for cleaner labels
+            reservedSize: 60, // Increased space for labels
             getTitlesWidget: (value, meta) {
               return SideTitleWidget(
                 axisSide: meta.axisSide,
                 child: Text(
                   '${value.toInt()}N',
-                  style: const TextStyle(color: Colors.black, fontSize: 10),
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize:
+                        MediaQuery.of(context).size.width *
+                        0.025, // Responsive font size
+                  ),
                 ),
               );
             },
