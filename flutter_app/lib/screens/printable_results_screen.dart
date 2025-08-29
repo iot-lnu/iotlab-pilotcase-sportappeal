@@ -303,21 +303,32 @@ class _PrintableResultsScreenState extends State<PrintableResultsScreen> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'IMTP TEST RESULTS',
-                style: GoogleFonts.montserrat(
-                  fontSize:
-                      MediaQuery.of(context).size.width *
-                      0.06, // Responsive font size
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
+              Container(
+                width: double.infinity,
+                child: Text(
+                  'IMTP TEST RESULTS',
+                  style: GoogleFonts.montserrat(
+                    fontSize:
+                        MediaQuery.of(context).size.width * 0.06 > 24
+                            ? 24
+                            : MediaQuery.of(context).size.width *
+                                0.06, // Cap font size
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                  overflow: TextOverflow.ellipsis, // Handle text overflow
+                  maxLines: 2, // Allow up to 2 lines
                 ),
               ),
               const SizedBox(height: 15),
               Text(
                 'Participant: ${widget.user.username}',
                 style: GoogleFonts.montserrat(
-                  fontSize: MediaQuery.of(context).size.width * 0.04,
+                  fontSize:
+                      MediaQuery.of(context).size.width * 0.04 > 16
+                          ? 16
+                          : MediaQuery.of(context).size.width *
+                              0.04, // Cap font size
                   fontWeight: FontWeight.w600,
                   color: Colors.black87,
                 ),
@@ -325,26 +336,41 @@ class _PrintableResultsScreenState extends State<PrintableResultsScreen> {
               Text(
                 'Email: ${widget.user.email}',
                 style: GoogleFonts.montserrat(
-                  fontSize: MediaQuery.of(context).size.width * 0.035,
+                  fontSize:
+                      MediaQuery.of(context).size.width * 0.035 > 14
+                          ? 14
+                          : MediaQuery.of(context).size.width *
+                              0.035, // Cap font size
                   color: Colors.black87,
                 ),
               ),
               const SizedBox(height: 15),
               // Date and duration info below main title to avoid overflow
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              // Use Wrap instead of Row for small screens
+              Wrap(
+                alignment: WrapAlignment.spaceBetween,
+                spacing: 8,
+                runSpacing: 8,
                 children: [
                   Text(
                     'Test Date: ${widget.testDate ?? DateTime.now().toString().split('.').first}',
                     style: GoogleFonts.montserrat(
-                      fontSize: MediaQuery.of(context).size.width * 0.035,
+                      fontSize:
+                          MediaQuery.of(context).size.width * 0.035 > 14
+                              ? 14
+                              : MediaQuery.of(context).size.width *
+                                  0.035, // Cap font size
                       color: Colors.black87,
                     ),
                   ),
                   Text(
                     'Duration: ${_analysis['testDuration']?.toStringAsFixed(1) ?? 'N/A'}s',
                     style: GoogleFonts.montserrat(
-                      fontSize: MediaQuery.of(context).size.width * 0.035,
+                      fontSize:
+                          MediaQuery.of(context).size.width * 0.035 > 14
+                              ? 14
+                              : MediaQuery.of(context).size.width *
+                                  0.035, // Cap font size
                       color: Colors.black87,
                     ),
                   ),
@@ -353,7 +379,11 @@ class _PrintableResultsScreenState extends State<PrintableResultsScreen> {
               Text(
                 'Data Points: ${_testData.length}',
                 style: GoogleFonts.montserrat(
-                  fontSize: MediaQuery.of(context).size.width * 0.035,
+                  fontSize:
+                      MediaQuery.of(context).size.width * 0.035 > 14
+                          ? 14
+                          : MediaQuery.of(context).size.width *
+                              0.035, // Cap font size
                   color: Colors.black87,
                 ),
               ),
@@ -380,10 +410,15 @@ class _PrintableResultsScreenState extends State<PrintableResultsScreen> {
           Text(
             'Force-Time Curve',
             style: GoogleFonts.montserrat(
-              fontSize: 18,
+              fontSize:
+                  MediaQuery.of(context).size.width * 0.045 > 18
+                      ? 18
+                      : MediaQuery.of(context).size.width *
+                          0.045, // Responsive font size
               fontWeight: FontWeight.bold,
               color: Colors.black,
             ),
+            overflow: TextOverflow.ellipsis, // Handle text overflow
           ),
           const SizedBox(height: 20),
           SizedBox(
