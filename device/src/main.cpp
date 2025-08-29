@@ -54,10 +54,12 @@ enum SystemState{//_
 volatile SystemState systemState = Idle_state;//_
 
 // --- WiFi ---
-const char* ssid = "***REMOVED***";
-const char* password = "***REMOVED***";
+#include "wifi.env" //Add your wifi credentials here see format in wifi.env.example
+const char* ssid = WIFI_SSID;
+const char* password = WIFI_PASSWORD;
 // --- Web Server ---
-const char* websocket_host = "***REMOVED***";  
+#include "ip.env" //Add your ip credentials here see format in ip.env.example
+const char* websocket_host = ip;
 const uint16_t websocket_port = 3000;
 
 WebSocketsClient webSocket;
