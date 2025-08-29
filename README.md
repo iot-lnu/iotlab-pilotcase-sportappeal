@@ -80,7 +80,9 @@ The IoT Dashboard screen provides:
 - Connection status monitoring
 - Device information display
 
-The dashboard connects to an MQTT broker to receive sensor data. For demonstration purposes (as seen in the `temp-humidity-sensor` branch), it can subscribe to a topic like `data/1dv027` for temperature and humidity. In the future, this will be adapted to subscribe to the relevant MQTT topics for real-time IMTP sensor data.
+
+
+The system now provides a complete end-to-end solution for IMTP strength testing, from real-time sensor data collection to comprehensive analysis and professional reporting.
 
 ## Project Structure
 
@@ -105,10 +107,15 @@ idrott-app/
 │   ├── lib/
 │   │   ├── components/        # Reusable UI widgets (buttons, text fields, etc.)
 │   │   │   ├── auth_card.dart
+│   │   │   ├── auth_guard.dart
 │   │   │   ├── back_button.dart
+│   │   │   ├── bottom_navigation.dart
 │   │   │   ├── custom_text_field.dart
 │   │   │   ├── primary_button.dart
-│   │   │   └── profile_icon.dart
+│   │   │   ├── profile_icon.dart
+│   │   │   ├── standard_background.dart
+│   │   │   ├── standard_page_layout.dart
+│   │   │   └── three_dots_menu.dart
 │   │   │
 │   │   ├── models/            # Data models
 │   │   │   └── user.dart      # User model for authentication
@@ -128,14 +135,20 @@ idrott-app/
 │   │   │   ├── backend_settings_screen.dart
 │   │   │   ├── choose_test_screen.dart
 │   │   │   ├── iot_dashboard.dart
+│   │   │   ├── network_debug_screen.dart
+│   │   │   ├── not_implemented_screen.dart
+│   │   │   ├── printable_results_screen.dart
 │   │   │   ├── realtime_comparison_screen.dart
+│   │   │   ├── realtime_loadcell_dashboard.dart
+│   │   │   ├── test_results_screen.dart
+│   │   │   ├── test_results_screen_v2.dart
 │   │   │   ├── user_profile_screen.dart
 │   │   │   └── user_test_dashboard.dart
 │   │   │
 │   │   ├── services/          # Business logic and API services
-│   │   │   ├── backend_config.dart      # Backend configuration
+│   │   │   ├── auth_service.dart        # Authentication service
+│   │   │   ├── backend_config.dart      # Backend configuration & auto-detection
 │   │   │   ├── loadcell_api_service.dart # REST API communication
-│   │   │   ├── mqtt_service.dart        # MQTT client (legacy)
 │   │   │   ├── users_data.dart          # User management
 │   │   │   └── websocket_service.dart   # WebSocket communication
 │   │   │
@@ -154,6 +167,9 @@ idrott-app/
 │
 └── README.md                  # Main project documentation
 ```
+
+
+---
 
 ## Getting Started
 

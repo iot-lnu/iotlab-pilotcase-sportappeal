@@ -1,5 +1,6 @@
 # IMTP Strength Measurement System - Development To-Do List
 
+
 ##  COMPLETED FEATURES
 
 ###  Core Application Structure
@@ -10,6 +11,49 @@
 - [x] Basic user profile system
 - [x] Test selection interface (Choose Test Screen)
 
+###  Data Visualization
+- [x] **Graphing Functionality**
+  - [x] Implement force vs. time graphs
+  - [x] Add configurable time intervals (0-50ms, 0-100ms, 0-150ms, 0-200ms, 0-250ms)
+  - [x] Create interactive charts with zoom and pan
+  - [x] Add real-time graph updates during testing
+  - [x] Implement T1-T2 interval selection (as shown in requirements)
+  - [x] Add "First + value" and "First - value" buttons for automatic T1 positioning
+
+- [x] **Data Export**
+  - [x] PDF report generation
+  - [x] Data backup functionality
+
+###  IMTP Test Data Analysis
+- [x] **Rate of Force Development (RFD) Calculations**
+  - [x] RFD 0-50 ms, N/s
+  - [x] RFD 0-100 ms, N/s
+  - [x] RFD 0-150 ms, N/s
+  - [x] RFD 0-200 ms, N/s
+  - [x] RFD 0-250 ms, N/s
+
+- [x] **Force Analysis**
+  - [x] Peak force calculation
+  - [x] Force at specific time intervals (50ms, 100ms, 150ms, 200ms, 250ms)
+  - [x] Force percentages relative to peak force
+
+- [x] **Impulse Calculations (Area Under Curve)**
+  - [x] Impulse 0-50 ms
+  - [x] Impulse 0-100 ms
+  - [x] Impulse 0-150 ms
+  - [x] Impulse 0-200 ms
+  - [x] Impulse 0-250 ms
+
+- [x] **Timing Analysis**
+  - [x] Length of pull duration
+  - [x] Time to peak force
+  - [x] T1-T2 interval management
+
+- [x] **Asymmetry Analysis**
+  - [x] Left/Right peak force comparison
+  - [x] Asymmetry percentage calculation
+  - [x] Individual left and right force values
+
 ###  User Management & Authentication
 - [x] **Role-based access control:**
   - [x] **Home page users** → **Admin role** (can manage users and access testing)
@@ -19,7 +63,7 @@
 - [x] Admin user creation and management
 - [x] User deletion functionality
 - [x] User list display
-- [x] Working logout functionality (header button + dedicated button)
+- [x] Working logout functionality
 - [x] Dynamic user names in admin dashboard
 
 ###  Backend Integration & Data Flow
@@ -31,6 +75,13 @@
 - [x] Frontend can control backend operations (start/stop tests)
 - [x] Backend can receive and process loadcell sensor data
 - [x] Complete data pipeline: Loadcell → Backend → WebSocket → Flutter App
+
+###  Backend Infrastructure
+- [x] Flask application with CORS support
+- [x] WebSocket server using Flask-Sock
+- [x] CSV data storage and management
+- [x] Basic error handling and logging
+- [x] RESTful API endpoints for data access
 
 ###  Test Selection Interface
 - [x] Choose test screen with multiple test options:
@@ -57,62 +108,6 @@
 - [x] Connection troubleshooting and commands
 
 ---
-
-##  CRITICAL MISSING FEATURES
-
-###  Data Visualization & Export (HIGHEST PRIORITY)
-- [ ] **Graphing Functionality**
-  - [ ] Implement force vs. time graphs
-  - [ ] Add configurable time intervals (0-50ms, 0-100ms, 0-150ms, 0-200ms, 0-250ms)
-  - [ ] Create interactive charts with zoom and pan
-  - [ ] Add real-time graph updates during testing
-  - [ ] Implement T1-T2 interval selection (as shown in requirements)
-  - [ ] Add "First + value" and "First - value" buttons for automatic T1 positioning
-
-- [ ] **Data Export & Download**
-  - [ ] PDF report generation
-  - [ ] CSV data export
-  - [ ] User test result downloads
-  - [ ] Data backup functionality
-
-###  IMTP Test Data Analysis (HIGHEST PRIORITY)
-- [ ] **Rate of Force Development (RFD) Calculations**
-  - [ ] RFD 0-50 ms, N/s
-  - [ ] RFD 0-100 ms, N/s
-  - [ ] RFD 0-150 ms, N/s
-  - [ ] RFD 0-200 ms, N/s
-  - [ ] RFD 0-250 ms, N/s
-
-- [ ] **Force Analysis**
-  - [ ] Peak force calculation
-  - [ ] Force at specific time intervals (50ms, 100ms, 150ms, 200ms, 250ms)
-  - [ ] Force percentages relative to peak force
-
-- [ ] **Impulse Calculations (Area Under Curve)**
-  - [ ] Impulse 0-50 ms
-  - [ ] Impulse 0-100 ms
-  - [ ] Impulse 0-150 ms
-  - [ ] Impulse 0-200 ms
-  - [ ] Impulse 0-250 ms
-
-- [ ] **Timing Analysis**
-  - [ ] Length of pull duration
-  - [ ] Time to peak force
-  - [ ] T1-T2 interval management
-
-- [ ] **Asymmetry Analysis**
-  - [ ] Left/Right peak force comparison
-  - [ ] Asymmetry percentage calculation
-  - [ ] Individual left and right force values
-
-###  Test Implementation
-- [ ] **Other Test Types**
-  - [ ] Implement Iso squat test functionality
-  - [ ] Implement Bench press test functionality
-  - [ ] Add custom test configuration options
-
----
-
 ##  PARTIALLY IMPLEMENTED FEATURES
 
 ###  Authentication & Authorization
@@ -126,75 +121,114 @@
   - [ ] Secure password reset functionality
   - [ ] Audit logging for user actions
 
-###  Test Data Management
-- [x] Basic test data collection
-- [x] Real-time sensor readings
-- [x] WebSocket connection and data streaming
-- [ ] **Missing:**
-  - [ ] Test result storage and retrieval
-  - [ ] Historical test data access
-  - [ ] Test result comparison
-  - [ ] Data analysis and reporting
 
-###  User Test Dashboard
-- [x] Basic test interface
-- [x] Sensor connection status
-- [x] Test start/stop functionality
-- [ ] **Missing:**
-  - [ ] Test result visualization (graphs/charts)
-  - [ ] Data analysis tools (RFD, impulse, timing)
-  - [ ] Report generation
-  - [ ] Test history management
+###  IMTP Analysis Implementation
+- [x] **Basic RFD calculations** for preset intervals (0-50ms, 0-100ms, 0-150ms, 0-200ms, 0-250ms)
+- [x] **Basic impulse calculations** for preset intervals
+- [x] **Basic timing analysis** (test duration, time to peak)
+- [x] **Basic asymmetry calculations** (left/right peak comparison)
+- [x] **T1-T2 interval selection** with preset buttons
+- [x] **"Find First Positive" button** for automatic T1 positioning
+- [ ] **Missing Advanced Features:**
+  - [ ] **Dynamic T1-T2 interval analysis** (user can set custom intervals)
+  - [ ] **Real-time RFD calculation** for custom T1-T2 intervals
+  - [ ] **Advanced impulse analysis** with custom time windows
+  - [ ] **Statistical analysis** (mean, standard deviation, confidence intervals)
+  - [ ] **Data validation** and error handling for edge cases
+  - [ ] **Export of analysis results** in structured format (JSON, Excel)
+
+###  Advanced Graphing & Visualization
+- [x] **Basic force-time charts** with Syncfusion Flutter Charts
+- [x] **Zoom and pan functionality** for chart interaction
+- [x] **Preset time interval selection** (0-50ms to 0-250ms)
+- [ ] **Missing Advanced Chart Features:**
+  - [ ] **Custom T1-T2 marker placement** on charts (drag and drop)
+  - [ ] **Multiple chart views** (force-time, force-velocity, power-time)
+  - [ ] **Chart annotations** and measurement tools
+  - [ ] **Real-time chart updates** during live testing
+  - [ ] **Chart export** in high-resolution formats (PNG, SVG)
+  - [ ] **Responsive chart sizing** for different screen orientations
 
 ---
 
-## DETAILED IMPLEMENTATION TASKS
+##  CRITICAL MISSING FEATURES
 
-### Phase 1: Data Visualization & IMTP Analysis & Database (Priority: HIGHEST)
-1. **Graphing implementation**
-   - [ ] Add chart library (fl_chart, syncfusion_flutter_charts)
-   - [ ] Create force vs. time graph component
-   - [ ] Implement T1-T2 interval selection (0-50ms to 0-250ms)
-   - [ ] Add "First + value" and "First - value" buttons for automatic T1 positioning
-   - [ ] Add real-time graph updates during testing
+###  Chart Clarity & Usability Issues (HIGHEST PRIORITY)
+- [ ] **Fix Chart Display Problems**
+  - [ ] Improve chart readability on small screens (Android overflow issues)
+  - [ ] Clean up cluttered X and Y axis labels and grid lines
+  - [ ] Optimize chart intervals for better data visualization
+  - [ ] Fix responsive chart sizing for different device orientations
+  - [ ] Improve chart legend layout and readability
 
-2. **IMTP data analysis tools**
-   - [ ] Implement RFD calculations for all time intervals
-   - [ ] Add impulse calculations (area under curve)
-   - [ ] Create timing analysis (time to peak force, length of pull)
-   - [ ] Implement asymmetry calculations (left/right force comparison)
-   - [ ] Create comprehensive IMTP results table
+###  Backend Infrastructure & Deployment (HIGHEST PRIORITY)
+- [ ] **Containerization & Deployment**
+  - [ ] Create Docker container for Flask backend
+  - [ ] Implement production deployment configuration
+  - [ ] Add environment variable management for different deployment stages
+ 
+###  ESP32 Architecture & Real-time Performance (HIGHEST PRIORITY)
+- [ ] **Implement Producer-Consumer Model**
+  - [ ] Replace shared state and global buffer with FreeRTOS StreamBuffers
+  - [ ] Refactor `vSamplerTask` to be pure producer (no shared state)
+  - [ ] Refactor `vSenderTask` to be pure consumer (no shared state)
+  - [ ] Eliminate busy-waiting loops in sampling task
+  - [ ] Implement interrupt-driven or event-based sampling approach
+  - [ ] Add back-pressure handling when StreamBuffer is full
 
-3. **Set up database**
-   - [ ] Choose database solution
-   - [ ] Create user table schema
-   - [ ] Implement database connection service
-   - [ ] Add user data persistence
+- [ ] **MQTT Protocol Migration** (HIGHEST PRIORITY)
+  - [ ] Replace raw WebSocket communication with MQTT protocol
+  - [ ] Implement MQTT broker integration (Mosquitto or similar)
+  - [ ] ESP32 as MQTT Publisher for sensor data (`/sensor/data` topic)
+  - [ ] Backend/Frontend as MQTT Subscribers for real-time updates
+  - [ ] Command & Control via MQTT (`/device/esp32_id/commands` topic)
+  - [ ] MQTT over WebSocket for web frontends
 
-### Phase 2: Test Implementation (Priority: MEDIUM)
-1. **Other test types**
-   - [ ] Implement Iso squat test logic
-   - [ ] Implement Bench press test logic
-   - [ ] Add custom test configuration
+- [ ] **Hardware Documentation & Specifications** (HIGHEST PRIORITY)
+  - [ ] Create Fritzing diagram for hardware prototype
+  - [ ] Document hardware specifications and component list
+  - [ ] Include wiring diagrams and pin configurations
+  - [ ] Document sensor calibration procedures
+  - [ ] Add hardware troubleshooting guide
 
-2. **Test data storage** (Priority: HIGHEST)
-   - [ ] Create test result storage system
-   - [ ] Implement historical data access
-   - [ ] Add test result comparison tools
+###  Test Implementation
+- [ ] **Other Test Types**
+  - [ ] Implement Iso squat test functionality
+  - [ ] Implement Bench press test functionality
+  - [ ] Add custom test configuration options
 
-### Phase 3: Export & Reporting (Priority: MEDIUM)
-1. **Report generation**
-   - [ ] Implement PDF generation (pdf package)
-   - [ ] Create report templates
-   - [ ] Add data export functionality
+###  Advanced Real-time Features (PRIORITY: MEDIUM)
+- [ ] **Interrupt-Driven Sampling**
+  - [ ] Replace polling-based sensor reading with interrupt-driven approach
+  - [ ] Implement proper interrupt handlers for ADS1220 DRDY pins
+  - [ ] Eliminate `while (!gotLeft || !gotRight)` busy-waiting loop
+  - [ ] Add proper error handling for sensor communication failures
 
-2. **Data management**
-   - [ ] Add test result history
-   - [ ] Implement data search and filtering
-   - [ ] Add data comparison tools
-   - [ ] Create user progress tracking
+- [ ] **Performance Optimization**
+  - [ ] Optimize FreeRTOS task priorities and stack sizes
+  - [ ] Implement proper task synchronization without shared state
+  - [ ] Add real-time performance monitoring and metrics
+  - [ ] Optimize JSON serialization for minimal latency
 
-### Phase 4: Advanced Features & Authentication  (Priority: LOW)
+###  Advanced IMTP Analysis Features (PRIORITY: MEDIUM)
+- [ ] **Dynamic T1-T2 Interval Analysis**
+  - [ ] Allow users to set custom T1-T2 intervals (not just presets)
+  - [ ] Implement real-time RFD calculation for custom intervals
+  - [ ] Add visual T1-T2 markers on charts with drag-and-drop functionality
+  - [ ] Real-time analysis updates as intervals change
+
+- [ ] **Advanced Statistical Analysis**
+  - [ ] Calculate mean, standard deviation, and confidence intervals
+  - [ ] Implement data validation and error handling for edge cases
+  - [ ] Add outlier detection and filtering algorithms
+  - [ ] Statistical comparison between multiple test sessions
+
+- [ ] **Enhanced Data Export**
+  - [ ] Download analysis results
+  - [ ] Save user testing report
+  - [ ] Batch export of multiple test results
+
+###  Advanced Features & Authentication  (Priority: LOW)
 1. **Enhanced UI/UX**
    - [ ] Add animations and transitions
    - [ ] Implement dark/light theme toggle
@@ -213,20 +247,9 @@
    - [ ] Implement session management
    - [ ] Add password reset functionality
 
----
+4. **Update flutter_app/image/Imtp-app.png and Project Structure at README.md**
 
-## NOTES
 
-- The current implementation has a solid foundation with working authentication and user management
-- **Backend integration is fully functional** with complete data pipeline from loadcell sensors to Flutter frontend
-- **Real-time data streaming works end-to-end** via WebSocket connection
-- **Frontend can control backend operations** (start/stop tests, data collection)
-- **User role system is working correctly**: 
-  - **Home page users** = **Admin role** (automatic assignment)
-  - **Admin dashboard created users** = **Regular user role** (for testing)
-  - **Jesper credentials** = **Demo placeholder** (shown on login page for quick testing)
-- **Logout functionality is working** with both header button and dedicated button
-- **IoT dashboard has been completely removed** and replaced with proper test selection flow
-- Device setup and connectivity is fully documented and validated across all platforms (Android, iOS, simulators)
-- Cross-platform development environment is properly configured and tested
-- The main missing pieces are data visualization, IMTP analysis algorithms, and data export functionality
+
+
+
