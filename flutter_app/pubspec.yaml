@@ -45,6 +45,7 @@ dependencies:
   provider: ^6.1.1
   web_socket_channel: ^2.4.0
   logging: ^1.2.0
+  flutter_dotenv: ^5.1.0
 
 # Explicitly exclude web dependencies
 dependency_overrides:
@@ -73,8 +74,8 @@ flutter:
   uses-material-design: true
 
   # Assets should be uncommented when you have the actual files
-  # assets:
-  #   - assets/images/
+  assets:
+    - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

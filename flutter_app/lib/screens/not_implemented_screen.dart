@@ -18,94 +18,115 @@ class NotImplementedScreen extends StatelessWidget {
     return StandardPageLayout(
       title: testType,
       currentRoute: '/not-implemented',
-      child: Column(
-        children: [
-          const SizedBox(height: 40),
+      child: SingleChildScrollView(
+        padding: EdgeInsets.symmetric(
+          horizontal: MediaQuery.of(context).size.width * 0.05,
+          vertical: MediaQuery.of(context).size.height * 0.02,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(height: MediaQuery.of(context).size.height * 0.03),
 
-          // Under Development Icon
-          Container(
-            width: 120,
-            height: 120,
-            decoration: BoxDecoration(
-              color: AppColors.accent.withValues(alpha: 0.2),
-              shape: BoxShape.circle,
-              border: Border.all(color: AppColors.accent, width: 2),
+            // Under Development Icon
+            Container(
+              width: MediaQuery.of(context).size.width * 0.25,
+              height: MediaQuery.of(context).size.width * 0.25,
+              decoration: BoxDecoration(
+                color: AppColors.accent.withValues(alpha: 0.2),
+                shape: BoxShape.circle,
+                border: Border.all(color: AppColors.accent, width: 2),
+              ),
+              child: Icon(
+                Icons.construction,
+                color: AppColors.primary,
+                size: MediaQuery.of(context).size.width * 0.12,
+              ),
             ),
-            child: const Icon(
-              Icons.construction,
-              color: AppColors.primary,
-              size: 60,
+
+            SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+
+            // Main Message
+            Text(
+              'COMING SOON',
+              style: AppTextStyles.sectionTitle.copyWith(
+                fontSize: MediaQuery.of(context).size.width * 0.045,
+              ),
             ),
-          ),
 
-          const SizedBox(height: 40),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.02),
 
-          // Main Message
-          Text(
-            'COMING SOON',
-            style: AppTextStyles.sectionTitle.copyWith(fontSize: 18),
-          ),
-
-          const SizedBox(height: 20),
-
-          // Description Text
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
-            child: Text(
-              'The $testType test is currently under development. Please check back later or try the IMTP test instead.',
-              textAlign: TextAlign.center,
-              style: AppTextStyles.bodyText,
-            ),
-          ),
-
-          const SizedBox(height: 40),
-
-          // Action Buttons
-          Column(
-            children: [
-              // Try IMTP Test Button
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder:
-                            (context) =>
-                                UserTestDashboard(user: user, testType: 'IMTP'),
-                      ),
-                    );
-                  },
-                  style: AppButtonStyles.primaryButton,
-                  child: Text('TRY IMTP TEST', style: AppTextStyles.buttonText),
+            // Description Text
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: MediaQuery.of(context).size.width * 0.04,
+              ),
+              child: Text(
+                'The $testType test is currently under development. Please check back later or try the IMTP test instead.',
+                textAlign: TextAlign.center,
+                style: AppTextStyles.bodyText.copyWith(
+                  fontSize: MediaQuery.of(context).size.width * 0.035,
                 ),
               ),
+            ),
 
-              const SizedBox(height: 15),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.03),
 
-              // Go Back Button
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: () => Navigator.pop(context),
-                  style: AppButtonStyles.secondaryButton,
-                  child: Text(
-                    'GO BACK',
-                    style: AppTextStyles.buttonText.copyWith(
-                      color: AppColors.primary,
+            // Action Buttons
+            Column(
+              children: [
+                // Try IMTP Test Button
+                SizedBox(
+                  width: double.infinity,
+                  height: MediaQuery.of(context).size.height * 0.06,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (context) => UserTestDashboard(
+                                user: user,
+                                testType: 'IMTP',
+                              ),
+                        ),
+                      );
+                    },
+                    style: AppButtonStyles.primaryButton,
+                    child: Text(
+                      'TRY IMTP TEST',
+                      style: AppTextStyles.buttonText.copyWith(
+                        fontSize: MediaQuery.of(context).size.width * 0.04,
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
-          ),
 
-          const Spacer(),
-        ],
+                SizedBox(height: MediaQuery.of(context).size.height * 0.015),
+
+                // Go Back Button
+                SizedBox(
+                  width: double.infinity,
+                  height: MediaQuery.of(context).size.height * 0.06,
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.pop(context),
+                    style: AppButtonStyles.secondaryButton,
+                    child: Text(
+                      'GO BACK',
+                      style: AppTextStyles.buttonText.copyWith(
+                        color: AppColors.primary,
+                        fontSize: MediaQuery.of(context).size.width * 0.04,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
+            SizedBox(height: MediaQuery.of(context).size.height * 0.025),
+          ],
+        ),
       ),
     );
   }

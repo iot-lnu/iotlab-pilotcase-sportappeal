@@ -48,7 +48,9 @@ class LoadcellApiService with ChangeNotifier {
       return false;
     } catch (e) {
       debugPrint('Connection check failed: $e');
-      debugPrint('Backend config: ${BackendConfig.getConnectionInfo()}');
+      BackendConfig.getConnectionInfo().then((info) {
+        debugPrint('Backend config: $info');
+      });
       _isConnected = false;
       notifyListeners();
       return false;

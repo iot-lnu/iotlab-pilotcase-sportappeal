@@ -56,7 +56,11 @@ class ChooseTestScreen extends StatelessWidget {
             // Main Content Container
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                padding: EdgeInsets.symmetric(
+                  horizontal:
+                      MediaQuery.of(context).size.width *
+                      0.04, // Responsive padding
+                ),
                 child: Container(
                   decoration: BoxDecoration(
                     color: const Color(
@@ -64,27 +68,40 @@ class ChooseTestScreen extends StatelessWidget {
                     ), // Dark background like other pages
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 30.0,
-                      vertical: 25.0,
+                  child: SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    padding: EdgeInsets.symmetric(
+                      horizontal:
+                          MediaQuery.of(context).size.width *
+                          0.05, // Responsive padding
+
+                      vertical: MediaQuery.of(context).size.height * 0.015,
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         // Title - "CHOOSE TEST" with underline
                         Text(
                           'CHOOSE TEST',
                           style: GoogleFonts.montserrat(
                             color: Colors.white,
-                            fontSize: 15,
+                            fontSize: MediaQuery.of(context).size.width * 0.038,
                             fontWeight: FontWeight.w700,
                             letterSpacing: 3,
                           ),
                         ),
-                        const SizedBox(height: 10),
-                        Container(width: 135, height: 1, color: Colors.white),
-                        const SizedBox(height: 40),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.012,
+                        ),
+                        Container(
+                          width: MediaQuery.of(context).size.width * 0.34,
+                          height: 1,
+                          color: Colors.white,
+                        ),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.025,
+                        ),
 
                         // IMTP Button
                         _buildTestButton(
@@ -104,7 +121,9 @@ class ChooseTestScreen extends StatelessWidget {
                           },
                         ),
 
-                        const SizedBox(height: 20),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.012,
+                        ),
 
                         // Iso squat Button
                         _buildTestButton(
@@ -124,7 +143,9 @@ class ChooseTestScreen extends StatelessWidget {
                           },
                         ),
 
-                        const SizedBox(height: 20),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.012,
+                        ),
 
                         // Bench press Button
                         _buildTestButton(
@@ -144,7 +165,9 @@ class ChooseTestScreen extends StatelessWidget {
                           },
                         ),
 
-                        const SizedBox(height: 20),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.012,
+                        ),
 
                         // Custom Button
                         _buildTestButton(
@@ -164,7 +187,9 @@ class ChooseTestScreen extends StatelessWidget {
                           },
                         ),
 
-                        const Spacer(),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.015,
+                        ),
                       ],
                     ),
                   ),
@@ -189,22 +214,24 @@ class ChooseTestScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0xFF007340), // Dark green button like other buttons
         borderRadius: BorderRadius.circular(
-          25,
-        ), // Rounded corners like other buttons
+          MediaQuery.of(context).size.width * 0.045,
+        ), // Responsive radius
       ),
       width: double.infinity,
-      height: 50,
+      height: MediaQuery.of(context).size.height * 0.055, // Responsive height
       child: Material(
         color: Colors.transparent,
         child: InkWell(
           onTap: onPressed,
-          borderRadius: BorderRadius.circular(25),
+          borderRadius: BorderRadius.circular(
+            MediaQuery.of(context).size.width * 0.045,
+          ),
           child: Center(
             child: Text(
               label,
               style: GoogleFonts.montserrat(
                 color: Colors.white,
-                fontSize: 12,
+                fontSize: MediaQuery.of(context).size.width * 0.03,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 3,
               ),

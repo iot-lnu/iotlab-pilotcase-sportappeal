@@ -81,6 +81,19 @@ class _AdminDashboardState extends State<AdminDashboard> {
 
               const SizedBox(height: 20),
 
+              SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: ElevatedButton(
+                  onPressed:
+                      () => Navigator.pushNamed(context, '/network-debug'),
+                  style: AppButtonStyles.secondaryButton,
+                  child: Text('NETWORK DEBUG', style: AppTextStyles.buttonText),
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
               Consumer<AuthService>(
                 builder: (context, authService, child) {
                   final currentUser = authService.currentUser;

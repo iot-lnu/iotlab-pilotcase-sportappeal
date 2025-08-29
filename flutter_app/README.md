@@ -53,11 +53,25 @@ flutter build ios  # iOS
 
 ## Configuration
 
-### Backend Connection
-Edit `lib/services/loadcell_api_service.dart`:
-```dart
-static const String _baseUrl = 'http://YOUR_SERVER_IP:5000';
+### Environment Variables (.env file)
+The app now uses a `.env` file for easy configuration. See [ENV_SETUP.md](ENV_SETUP.md) for detailed setup instructions.
+
+**Quick setup:**
+```bash
+# Copy the example file
+cp env.example.txt .env
+
+# Edit with your backend URL
+BACKEND_URL=http://YOUR_SERVER_IP:5000
 ```
+
+### Backend Connection
+The app automatically reads backend configuration from the `.env` file. No need to edit code files anymore!
+
+**Platform-specific examples:**
+- **iOS Simulator**: `BACKEND_URL=http://127.0.0.1:5000`
+- **Android Emulator**: `BACKEND_URL=http://10.0.2.2:5000`
+- **Physical Device**: `BACKEND_URL=http://192.168.1.158:5000`
 
 ### MQTT Settings
 Edit `lib/services/mqtt_service.dart`:

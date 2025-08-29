@@ -1,6 +1,7 @@
 import 'dart:io' as io;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'screens/auth_screen.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/auth/register_screen.dart';
@@ -13,6 +14,7 @@ import 'screens/user_profile_screen.dart';
 import 'screens/realtime_loadcell_dashboard.dart';
 import 'screens/test_results_screen.dart';
 import 'screens/printable_results_screen.dart';
+import 'screens/network_debug_screen.dart';
 
 import 'screens/choose_test_screen.dart';
 import 'services/loadcell_api_service.dart';
@@ -30,7 +32,10 @@ class MyHttpOverrides extends io.HttpOverrides {
   }
 }
 
-void main() {
+void main() async {
+  // Load environment variables from .env file
+  await dotenv.load(fileName: ".env");
+
   // Set HTTP overrides for all mobile platforms
   io.HttpOverrides.global = MyHttpOverrides();
 
@@ -99,6 +104,8 @@ class IdrrottApp extends StatelessWidget {
                 user: ModalRoute.of(context)!.settings.arguments as dynamic,
               ),
             ),
+        '/network-debug':
+            (context) => const AuthGuard(child: NetworkDebugScreen()),
       },
     );
   }

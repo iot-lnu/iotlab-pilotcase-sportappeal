@@ -19,12 +19,14 @@ class _BackendSettingsScreenState extends State<BackendSettingsScreen> {
   @override
   void initState() {
     super.initState();
+    // Call async method without awaiting in initState
     _updateConnectionInfo();
   }
 
-  void _updateConnectionInfo() {
+  Future<void> _updateConnectionInfo() async {
+    final info = await BackendConfig.getConnectionInfo();
     setState(() {
-      _connectionInfo = BackendConfig.getConnectionInfo();
+      _connectionInfo = info;
     });
   }
 
